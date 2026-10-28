@@ -2,7 +2,8 @@
     "name": "XRayHands.Analytics",
     "rootNamespace": "XRayHands.Analytics",
     "references": [
-        "XRayHands.Core"
+        "XRayHands.Core",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

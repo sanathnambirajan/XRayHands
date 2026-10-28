@@ -8,6 +8,8 @@
         "XRayHands.Analytics",
         "XRayHands.Rendering",
         "XRayHands.Feedback",
+        "XRayHands.Interaction",
+        "XRayHands.Audio",
         "Unity.TextMeshPro",
         "Unity.InputSystem"
     ],

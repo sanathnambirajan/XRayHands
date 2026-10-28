@@ -280,6 +280,8 @@ MonoBehaviour:
   - enigma_1993_522_rotors
   _initialSpecimen: 0
   _volumeShader: {fileID: 4800000, guid: 1bc1902972688f0438bfffc6e9a0c33f, type: 3}
+  _chartShader: {fileID: 4800000, guid: 6251099ebcb122c438f2c50d05887e4d, type: 3}
+  _labelFont: {fileID: 0}
   _tuning: {fileID: 0}
   _spawnForwardDown: {x: 0.55, y: 0.15}
 --- !u!4 &468003356

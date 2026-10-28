@@ -4,6 +4,8 @@
     "references": [
         "XRayHands.Core",
         "XRayHands.Input",
+        "XRayHands.Interaction",
+        "XRayHands.Analytics",
         "Unity.TextMeshPro"
     ],
     "includePlatforms": [],

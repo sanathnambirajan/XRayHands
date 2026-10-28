@@ -93,6 +93,43 @@ namespace XRayHands.Core
             BrickTexture.Apply(false, true);
         }
 
+        /// <summary>
+        /// Window (level, width) in normalised density for the cut-face slice, from the 1st and
+        /// 99.5th percentile of the non-air voxels. A full 0..1 window wastes most of the grey
+        /// range on air; windowing on the material is what radiologists and CT software do.
+        /// </summary>
+        public Vector2 AutoWindow()
+        {
+            int airMax = Meta.materials[0].u8_max;
+            var histogram = new int[256];
+            int count = 0;
+            for (int i = 0; i < Density.Length; i += 7) // every 7th voxel is plenty for percentiles
+            {
+                byte v = Density[i];
+                if (v <= airMax) continue;
+                histogram[v]++;
+                count++;
+            }
+            if (count == 0) return new Vector2(Meta.window.level, Meta.window.width);
+            int lo = Percentile(histogram, count, 0.01f);
+            int hi = Percentile(histogram, count, 0.995f);
+            // Include the air level so pores still read black on the cut face.
+            float low = Mathf.Min(airMax, lo) / 255f;
+            float high = Mathf.Max(hi, lo + 1) / 255f;
+            return new Vector2(0.5f * (low + high), high - low);
+        }
+
+        private static int Percentile(int[] histogram, int count, float p)
+        {
+            int target = Mathf.CeilToInt(p * count), acc = 0;
+            for (int v = 0; v < histogram.Length; v++)
+            {
+                acc += histogram[v];
+                if (acc >= target) return v;
+            }
+            return histogram.Length - 1;
+        }
+
         /// <summary>Flat array index of a voxel.</summary>
         public int Index(int x, int y, int z) => (z * Dims.y + y) * Dims.x + x;
 
