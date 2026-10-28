@@ -4,6 +4,7 @@
     "references": [
         "XRayHands.Core",
         "XRayHands.Input",
+        "XRayHands.Input.XR",
         "XRayHands.Gestures",
         "XRayHands.Analytics",
         "XRayHands.Rendering",

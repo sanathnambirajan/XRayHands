@@ -108,9 +108,21 @@ namespace XRayHands.App
             Volume = root.AddComponent<VolumeRenderer>();
             Volume.Initialize(_volumeShader);
 
-            var sim = gameObject.AddComponent<SimulatedHandSource>();
-            sim.Specimen = SpecimenRoot;
-            Hands = sim;
+            // Real hands when an XR hand subsystem is running (headset, Link, XR Simulator);
+            // keyboard/mouse simulation otherwise. Everything downstream is identical.
+            if (XRHandsSource.IsAvailable())
+            {
+                var xr = gameObject.AddComponent<XRHandsSource>();
+                Camera head = Camera.main;
+                xr.TrackingSpace = head != null ? head.transform.parent : null;
+                Hands = xr;
+            }
+            else
+            {
+                var sim = gameObject.AddComponent<SimulatedHandSource>();
+                sim.Specimen = SpecimenRoot;
+                Hands = sim;
+            }
             CreateHandView(Hands.Left, "LeftHand");
             CreateHandView(Hands.Right, "RightHand");
 
