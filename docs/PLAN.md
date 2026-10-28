@@ -6,15 +6,18 @@ Status legend: ✅ done and verified · 🟡 implemented, not yet verified end-t
 | Item | Status | Notes |
 |---|---|---|
 | Unity 6000.3.27f1 | ✅ | brief says 25f1; same 6.3 LTS line, already installed (saves ~5 GB) |
-| Android Build Support | 🔒 | headless Hub install failed ("error while executing the installer", disk was at 2 GB); install via Unity Hub GUI → Installs → 6000.3.27f1 → Add modules → Android Build Support (+ OpenJDK, SDK & NDK). Needs ~6 GB free |
+| Android Build Support | ✅ | installed headless via Unity Hub CLI after freeing disk (OpenJDK 17, SDK platforms 34–37, NDK r27c) |
 | Git, Python 3.11 venv, uv, Node 24 LTS | ✅ | |
 | Project `C:/Users/sanat/XRayHands`, URP 3D template | ✅ | |
 | git + Unity .gitignore + LFS .gitattributes | ✅ | no remote yet (ask before creating) |
 | MCP for Unity | ✅ | console, hierarchy, tests, screenshots all driven through MCP |
-| Meta agentic tools (plugin + metavr MCP) | ⬜ | Node is installed; `/plugin` commands must be run by a user in Claude Code |
+| Meta agentic tools: meta-vr plugin 2.0.0 | ✅ | marketplace is named `meta-vr` (install id `meta-vr@meta-vr`); skills load after a Claude Code restart |
+| metavr MCP (`npx -y metavr mcp install claude-code`) | 🔒 | blocked by the agent's permission policy (runs downloaded npm code); run it yourself |
 | OpenXR, Meta OpenXR 2.7.0, XR Hands 1.10.0, AR Foundation 6.6.0 | ✅ | versions resolved by the Unity package manager for 6000.3 |
-| OpenXR loader + Meta Quest feature + hand tracking enabled | ⬜ | next step; Android tab needs the Android module |
-| Player settings (ARM64, IL2CPP, Vulkan, SPI, linear, 72 Hz) | ⬜ | after the Android module |
+| OpenXR loader + Meta Quest feature + hand tracking + passthrough | ✅ | `XRayHands → Configure XR + Player (Quest)` (Editor/ProjectSetup.cs), reproducible on lab PCs; OpenXR validation: 0 errors, 1 benign warning (SSAO disabled but not removed) |
+| Player settings (ARM64, IL2CPP, Vulkan, SPI, linear, API 32, MSAA 4×) | ✅ | 72 Hz is the Quest 3 default; fixed foveation still ⬜ |
+| XR Origin + AR Session (passthrough) | ✅ | enabled only when an XR runtime is running; desktop mode has 0 warnings |
+| GitHub remote | 🔒 | `gh` installed; needs `gh auth login` by Sanath, then private repo `sanathnambirajan/XRayHands` |
 | Meta XR Simulator | ⬜ | `SimulatedHandSource` covers headset-free testing meanwhile |
 
 ## M1 (target 23.11.2026)
@@ -24,7 +27,7 @@ Status legend: ✅ done and verified · 🟡 implemented, not yet verified end-t
 | NIST sample selection | ranking from reference data | ✅ sample 2 |
 | Volume rendering | stereo-safe URP ray marcher, ESS, jitter, opacity correction | ✅ editor; stereo check ⬜ |
 | Grab / scale / cut / peel | gesture → tool → visible effect | 🟡 tools done; rendering effects verified via API; gesture timelines ⬜ |
-| Device test script | docs/DEVICE_TEST.md | ⬜ |
+| Device test script | docs/DEVICE_TEST.md | ✅ written |
 
 ## M2 (14.12.2026)
 | Task | Status |
