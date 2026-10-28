@@ -242,7 +242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 076937beb8763d94790d2e9cc1248ac8, type: 3}
   m_Name: ARSessionFeature Android
   m_EditorClassIdentifier: Unity.XR.MetaOpenXR::UnityEngine.XR.OpenXR.Features.Meta.ARSessionFeature
-  m_enabled: 0
+  m_enabled: 1
   nameUi: 'Meta Quest: Session'
   version: 0.1.0
   featureIdInternal: com.unity.openxr.feature.arfoundation-meta-session
@@ -287,7 +287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e567abbf4d944210acb6315178bb015, type: 3}
   m_Name: ARCameraFeature Android
   m_EditorClassIdentifier: Unity.XR.MetaOpenXR::UnityEngine.XR.OpenXR.Features.Meta.ARCameraFeature
-  m_enabled: 0
+  m_enabled: 1
   nameUi: 'Meta Quest: Camera (Passthrough)'
   version: 0.1.0
   featureIdInternal: com.unity.openxr.feature.arfoundation-meta-camera
@@ -311,7 +311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e314dfef9af0904e80129bcc0a79361, type: 3}
   m_Name: HandTracking Android
   m_EditorClassIdentifier: Unity.XR.Hands::UnityEngine.XR.Hands.OpenXR.HandTracking
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Hand Tracking Subsystem
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.handtrackingsubsystem
@@ -378,7 +378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e314dfef9af0904e80129bcc0a79361, type: 3}
   m_Name: HandTracking Standalone
   m_EditorClassIdentifier: Unity.XR.Hands::UnityEngine.XR.Hands.OpenXR.HandTracking
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Hand Tracking Subsystem
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.handtrackingsubsystem
@@ -446,45 +446,45 @@ MonoBehaviour:
   m_Name: Standalone
   m_EditorClassIdentifier: Unity.XR.OpenXR::UnityEngine.XR.OpenXR.OpenXRSettings
   features:
-  - {fileID: 7192217067367679678}
-  - {fileID: -1454879280425104911}
-  - {fileID: -894797446749367571}
-  - {fileID: 8422858032084189874}
-  - {fileID: -6676358748076713686}
+  - {fileID: 1759293697125354052}
   - {fileID: -7052211192719641878}
-  - {fileID: 4738033021525427572}
-  - {fileID: 3359191572360307767}
-  - {fileID: 3740534304667058206}
-  - {fileID: 3436000618922683428}
-  - {fileID: -588345778569312232}
-  - {fileID: 3487632690841131621}
-  - {fileID: -3596885848323002531}
   - {fileID: -3521532625147306988}
-  - {fileID: 11305325799306440}
-  - {fileID: 3002567101991649448}
-  - {fileID: 5755295692797031754}
+  - {fileID: -894797446749367571}
   - {fileID: 7652408001175483400}
-  - {fileID: -2540898856557736220}
-  - {fileID: 6442772754451702315}
-  - {fileID: 5029638880029340276}
   - {fileID: 810340803861218619}
-  - {fileID: 356929060957472139}
-  - {fileID: 7193346882185437526}
+  - {fileID: -588345778569312232}
+  - {fileID: 5755295692797031754}
+  - {fileID: 3487632690841131621}
+  - {fileID: 8422858032084189874}
+  - {fileID: 3436000618922683428}
+  - {fileID: -2540898856557736220}
+  - {fileID: -6676358748076713686}
+  - {fileID: 7948457817132028496}
+  - {fileID: 6442772754451702315}
+  - {fileID: -3596885848323002531}
+  - {fileID: -1846649550751934441}
+  - {fileID: -3915465727159496522}
+  - {fileID: -7826723914079921792}
   - {fileID: 3250511720070952217}
   - {fileID: -5094425742506614884}
-  - {fileID: -1846649550751934441}
-  - {fileID: -1617809874995436549}
-  - {fileID: -7826723914079921792}
-  - {fileID: -3915465727159496522}
-  - {fileID: 1759293697125354052}
-  - {fileID: 542057822252948943}
-  - {fileID: -5778262308434429975}
   - {fileID: 6422068433265361941}
-  - {fileID: -2827994575415949591}
   - {fileID: -677011574462953065}
-  - {fileID: 4817939484723661534}
+  - {fileID: -1617809874995436549}
+  - {fileID: -2827994575415949591}
+  - {fileID: 542057822252948943}
+  - {fileID: 356929060957472139}
+  - {fileID: 7193346882185437526}
+  - {fileID: -5778262308434429975}
+  - {fileID: 3359191572360307767}
+  - {fileID: 11305325799306440}
+  - {fileID: -1454879280425104911}
+  - {fileID: 4738033021525427572}
+  - {fileID: 3740534304667058206}
+  - {fileID: 7192217067367679678}
+  - {fileID: 5029638880029340276}
+  - {fileID: 3002567101991649448}
   - {fileID: -4952274852840586827}
-  - {fileID: 7948457817132028496}
+  - {fileID: 4817939484723661534}
   - {fileID: 1113688685505921306}
   customLoaderName: 
   m_renderMode: 1
@@ -1038,7 +1038,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f647cc0545697264a9878224faada6d5, type: 3}
   m_Name: MetaQuestFeature Android
   m_EditorClassIdentifier: Unity.XR.OpenXR.Features.MetaQuestSupport::UnityEngine.XR.OpenXR.Features.MetaQuestSupport.MetaQuestFeature
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Meta Quest Support
   version: 1.0.0
   featureIdInternal: com.unity.openxr.feature.metaquest
@@ -1131,7 +1131,7 @@ MonoBehaviour:
   - {fileID: -6523580445157191506}
   customLoaderName: 
   m_renderMode: 1
-  m_latencyOptimization: 0
+  m_latencyOptimization: 1
   m_autoColorSubmissionMode: 1
   m_colorSubmissionModes:
     m_List: 00000000
@@ -1369,7 +1369,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3aced3429e5911458f4da2dac9d0f29, type: 3}
   m_Name: MetaHandTrackingAim Android
   m_EditorClassIdentifier: Unity.XR.Hands::UnityEngine.XR.Hands.OpenXR.MetaHandTrackingAim
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Meta Hand Tracking Aim
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.metahandtrackingaim
@@ -1493,7 +1493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feeef8d85de8db242bdda70cc7ff5acd, type: 3}
   m_Name: OculusTouchControllerProfile Android
   m_EditorClassIdentifier: Unity.XR.OpenXR::UnityEngine.XR.OpenXR.Features.Interactions.OculusTouchControllerProfile
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Oculus Touch Controller Profile
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.oculustouch
@@ -1696,7 +1696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 323d71788dcf5ca4b9cb3c4a90e38335, type: 3}
   m_Name: OpenXRLifeCycleFeature Android
   m_EditorClassIdentifier: Unity.XR.MetaOpenXR::UnityEngine.XR.OpenXR.Features.Meta.OpenXRLifeCycleFeature
-  m_enabled: 0
+  m_enabled: 1
   nameUi: 
   version: 0.1.0
   featureIdInternal: MetaOpenXR-OpenXRLifeCycle
@@ -1972,7 +1972,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3aced3429e5911458f4da2dac9d0f29, type: 3}
   m_Name: MetaHandTrackingAim Standalone
   m_EditorClassIdentifier: Unity.XR.Hands::UnityEngine.XR.Hands.OpenXR.MetaHandTrackingAim
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Meta Hand Tracking Aim
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.metahandtrackingaim

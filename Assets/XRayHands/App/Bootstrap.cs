@@ -19,8 +19,13 @@ namespace XRayHands.App
     /// searches the scene (no FindObjectOfType in hot paths) and every piece can be replaced
     /// by a test double.
     /// </summary>
+    [DefaultExecutionOrder(-1000)] // runs before the XR/AR components so desktop mode can disable them first
     public sealed class Bootstrap : MonoBehaviour, ISpecimenHost
     {
+        /// <summary>Eye height used when no headset tracks the camera (desktop / editor), metres.</summary>
+        public const float DesktopEyeHeightMeters = 1.6f;
+        private static readonly Color DesktopBackground = new Color(0.07f, 0.08f, 0.1f, 1f);
+
         [Tooltip("Specimen folder names under StreamingAssets/Specimens, in shelf order.")]
         [SerializeField] private string[] _specimenIds = { "nist_set1sample2", "enigma_1993_522_rotors" };
 
@@ -112,6 +117,7 @@ namespace XRayHands.App
             // keyboard/mouse simulation otherwise. Everything downstream is identical.
             if (XRHandsSource.IsAvailable())
             {
+                SetXrComponentsEnabled(true);
                 var xr = gameObject.AddComponent<XRHandsSource>();
                 Camera head = Camera.main;
                 xr.TrackingSpace = head != null ? head.transform.parent : null;
@@ -122,6 +128,7 @@ namespace XRayHands.App
                 var sim = gameObject.AddComponent<SimulatedHandSource>();
                 sim.Specimen = SpecimenRoot;
                 Hands = sim;
+                EnterDesktopMode();
             }
             CreateHandView(Hands.Left, "LeftHand");
             CreateHandView(Hands.Right, "RightHand");
@@ -340,6 +347,42 @@ namespace XRayHands.App
             t.localScale = Vector3.one * DefectChart3D.SizeMeters;
             // The chart's local origin is its corner; centre the cube on the anchor.
             t.position = ChartAnchor() - t.rotation * (Vector3.one * (0.5f * DefectChart3D.SizeMeters));
+        }
+
+        /// <summary>
+        /// The XR rig components (XR Origin, AR Session, AR camera manager/background, tracked
+        /// pose driver) are saved <b>disabled</b> in the scene and switched on here only when an
+        /// XR runtime is running. Without a headset they would only log "no subsystem"
+        /// warnings, and AR Foundation runs them before any script of ours could stop them.
+        /// Matched by namespace so the app assembly needs no AR Foundation reference.
+        /// </summary>
+        public static void SetXrComponentsEnabled(bool enabled)
+        {
+            foreach (Behaviour b in FindObjectsByType<Behaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (IsXrRigComponent(b)) b.enabled = enabled;
+            }
+        }
+
+        /// <summary>True for the XR rig behaviours managed by <see cref="SetXrComponentsEnabled"/>.</summary>
+        public static bool IsXrRigComponent(Behaviour b)
+        {
+            string ns = b.GetType().Namespace ?? string.Empty;
+            return ns.StartsWith("UnityEngine.XR.ARFoundation") || ns.StartsWith("Unity.XR.CoreUtils") ||
+                   ns.StartsWith("UnityEngine.InputSystem.XR");
+        }
+
+        /// <summary>
+        /// No XR runtime: camera at standing eye height and an opaque background, since there
+        /// is no passthrough to show through a transparent one.
+        /// </summary>
+        private void EnterDesktopMode()
+        {
+            Camera cam = Camera.main;
+            if (cam == null) return;
+            cam.transform.SetPositionAndRotation(new Vector3(0f, DesktopEyeHeightMeters, 0f), Quaternion.Euler(12f, 0f, 0f));
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            cam.backgroundColor = DesktopBackground;
         }
 
         private void CreateHandView(HandFrame frame, string name)
