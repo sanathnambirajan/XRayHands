@@ -1,0 +1,17 @@
+{
+    "name": "XRayHands.Input",
+    "rootNamespace": "XRayHands.Input",
+    "references": [
+        "XRayHands.Core",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

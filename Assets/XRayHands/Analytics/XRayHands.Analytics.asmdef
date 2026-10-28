@@ -1,0 +1,16 @@
+{
+    "name": "XRayHands.Analytics",
+    "rootNamespace": "XRayHands.Analytics",
+    "references": [
+        "XRayHands.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

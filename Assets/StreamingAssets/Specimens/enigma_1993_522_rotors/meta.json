@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "id": "enigma_1993_522_rotors",
+  "name": "Enigma I rotors (Deutsches Museum Inv. 1993-522)",
+  "dims": [
+    125,
+    196,
+    135
+  ],
+  "spacing_mm": [
+    0.724364,
+    0.724364,
+    0.7243679999999699
+  ],
+  "volume_file": "volume_u8.raw",
+  "label_file": "labels_u16.raw",
+  "features_file": "features.csv",
+  "value_range": {
+    "raw_low": 12669.0,
+    "raw_high": 34980.0,
+    "unit": "CT grey value (16-bit, uncalibrated)"
+  },
+  "window": {
+    "level": 0.5,
+    "width": 1.0
+  },
+  "materials": [
+    {
+      "name": "air",
+      "u8_min": 0,
+      "u8_max": 32,
+      "color": "#1A2230"
+    },
+    {
+      "name": "low attenuation",
+      "u8_min": 33,
+      "u8_max": 98,
+      "color": "#7C8C9C"
+    },
+    {
+      "name": "medium attenuation",
+      "u8_min": 99,
+      "u8_max": 161,
+      "color": "#B8C4CF"
+    },
+    {
+      "name": "high attenuation",
+      "u8_min": 162,
+      "u8_max": 255,
+      "color": "#E0A64A"
+    }
+  ],
+  "defect_count": 790,
+  "defect_classes": {
+    "gas_pore": "#FFDF8A",
+    "lack_of_fusion": "#FF9A3D",
+    "crack": "#FF5546",
+    "component": "#9FB4C8"
+  },
+  "chart_axes": [
+    {
+      "column": "log10_volume_mm3",
+      "label": "log10 part volume (mm³)"
+    },
+    {
+      "column": "elongation",
+      "label": "elongation"
+    },
+    {
+      "column": "mean_density_u8",
+      "label": "mean attenuation (8-bit)"
+    }
+  ],
+  "ground_truth": null,
+  "display": {
+    "physical_extent_m": 0.141975344,
+    "default_scale": 1.7608691266844192,
+    "min_scale": 1.0,
+    "max_scale": 35.21738253368839
+  },
+  "source": {
+    "title": "Cipher Machine Enigma I (Inv. 1993-522)",
+    "url": "https://zenodo.org/records/8232721",
+    "files": [
+      "1993-522_ROI_rotors.dcm.zip"
+    ]
+  },
+  "license": "CC BY-SA 4.0 (record metadata lists CC BY 4.0; treated as BY-SA to be safe)",
+  "attribution": "Deutsches Museum, Inv. 1993-522; CT by Fraunhofer IIS/EZRT; 3D-Cipher project (BMBF eHeritage). Cropped, windowed, downsampled and segmented by Group 07.",
+  "processing": {
+    "full_res_voxel_mm": [
+      0.181091,
+      0.181091,
+      0.18109199999999248
+    ],
+    "air_threshold_raw": 12601.0,
+    "material_thresholds_u8": [
+      32.0,
+      98.0,
+      161.0
+    ],
+    "component_rule": "26-connected components per multi-Otsu attenuation bin",
+    "min_component_voxels": 64,
+    "downsample_factor": 4,
+    "intensity_downsample": "area mean",
+    "label_downsample": "max pool"
+  }
+}

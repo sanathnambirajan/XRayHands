@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "id": "nist_set1sample2",
+  "name": "CoCr L-PBF sample, central 1.57 mm cube (set1sample2, NIST)",
+  "dims": [
+    214,
+    214,
+    214
+  ],
+  "spacing_mm": [
+    0.007350000000000001,
+    0.007350000000000001,
+    0.007350000000000001
+  ],
+  "volume_file": "volume_u8.raw",
+  "label_file": "labels_u16.raw",
+  "features_file": "features.csv",
+  "value_range": {
+    "raw_low": 41645.0,
+    "raw_high": 54689.0,
+    "unit": "XCT grey value (16-bit, uncalibrated)"
+  },
+  "window": {
+    "level": 0.5,
+    "width": 1.0
+  },
+  "materials": [
+    {
+      "name": "air / pore",
+      "u8_min": 0,
+      "u8_max": 33,
+      "color": "#1A2230"
+    },
+    {
+      "name": "CoCr alloy",
+      "u8_min": 34,
+      "u8_max": 255,
+      "color": "#B8C4CF"
+    }
+  ],
+  "defect_count": 3710,
+  "defect_classes": {
+    "gas_pore": "#FFDF8A",
+    "lack_of_fusion": "#FF9A3D",
+    "crack": "#FF5546",
+    "component": "#9FB4C8"
+  },
+  "chart_axes": [
+    {
+      "column": "log10_volume_mm3",
+      "label": "log10 pore volume (mm³)"
+    },
+    {
+      "column": "sphericity",
+      "label": "sphericity"
+    },
+    {
+      "column": "centroid_z_mm",
+      "label": "build height in crop (mm)"
+    }
+  ],
+  "ground_truth": {
+    "precision": 0.8989690721649485,
+    "recall": 0.7481108312342569,
+    "iou": 0.5928947856317024,
+    "reference_count": 3176,
+    "predicted_count": 2910,
+    "missed_count": 800,
+    "match_rule": "object TP if it shares >= 1 voxel with a reference pore; IoU over all pore voxels"
+  },
+  "display": {
+    "physical_extent_m": 0.0015729000000000001,
+    "default_scale": 158.94208150549937,
+    "min_scale": 79.47104075274969,
+    "max_scale": 3178.8416301099874
+  },
+  "source": {
+    "title": "High-Resolution X-ray computed tomography (XCT) image data set of additively manufactured cobalt chrome samples produced with varying laser powder bed fusion processing parameters",
+    "doi": "10.18434/M32162",
+    "url": "https://data.nist.gov/od/id/mds2-2162",
+    "files": [
+      "raw/set1sample2raw.zip",
+      "segmented/set1sample2segmented.zip"
+    ]
+  },
+  "license": "NIST open license, https://www.nist.gov/open/license",
+  "attribution": "National Institute of Standards and Technology (NIST), mds2-2162; modified (cropped, windowed, downsampled, re-segmented) by Group 07 for X-Ray Hands.",
+  "processing": {
+    "full_res_voxel_mm": 0.0024500000000000004,
+    "full_res_crop_zyx": [
+      [
+        130,
+        770
+      ],
+      [
+        186,
+        826
+      ],
+      [
+        171,
+        811
+      ]
+    ],
+    "material_threshold_raw": 43352.0,
+    "threshold_method": "ISO50: halfway between air (median of darkest 0.3 %) and material (median) grey value",
+    "air_value_raw": 35660.0,
+    "material_value_raw": 51044.0,
+    "denoise": "3x3x3 median filter before thresholding (as in the NIST reference pipeline); the displayed volume is the filtered one",
+    "pore_rule": "air enclosed by material (3D hole filling), 26-connected",
+    "min_component_voxels": 8,
+    "downsample_factor": 3,
+    "intensity_downsample": "area mean",
+    "label_downsample": "max pool",
+    "depth_note": "interior (local) tomography + central crop: depth_mm is distance to the crop boundary, not to the part surface, so it is not charted",
+    "cut_pores": "pores touching the crop boundary are not enclosed and are excluded"
+  }
+}
