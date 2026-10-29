@@ -236,6 +236,25 @@ namespace XRayHands.Interaction
         /// <summary>Runs one frame of interaction.</summary>
         public void Tick(in ToolFrame f)
         {
+            // Exception to "no stealing": a two-hand gesture that starts while a one-hand tool
+            // runs takes over. Two-hand gestures are the more specific intent (two facing palms
+            // also contain one flat palm), so without this a peel performed next to the
+            // specimen would be captured by an already-running cut. Found by the figure harness.
+            if (Active != null && Active.Usage != HandUsage.Both)
+            {
+                foreach (ITool t in _tools)
+                {
+                    if (t == Active) break; // only higher-priority tools may pre-empt
+                    if (t.Usage != HandUsage.Both || !t.CanStart(f)) continue;
+                    ITool old = Active;
+                    old.End();
+                    Active = t;
+                    t.Begin(f);
+                    ToolChanged?.Invoke(old, t);
+                    break;
+                }
+            }
+
             if (Active != null && !Active.Tick(f))
             {
                 ITool old = Active;

@@ -1,0 +1,23 @@
+{
+    "name": "XRayHands.Verification",
+    "rootNamespace": "XRayHands.Verification",
+    "references": [
+        "XRayHands.Core",
+        "XRayHands.Input",
+        "XRayHands.Gestures",
+        "XRayHands.Analytics",
+        "XRayHands.Rendering",
+        "XRayHands.Interaction",
+        "XRayHands.Feedback",
+        "XRayHands.App"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -6,7 +6,10 @@
         "UnityEditor.TestRunner",
         "XRayHands.Core",
         "XRayHands.Input",
-        "XRayHands.Gestures"
+        "XRayHands.Gestures",
+        "XRayHands.Interaction",
+        "XRayHands.Analytics",
+        "XRayHands.Rendering"
     ],
     "includePlatforms": [
         "Editor"

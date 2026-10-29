@@ -37,3 +37,28 @@ from the Main Camera in Play mode, and inspected by eye.
 
 **Not yet verified:** gesture-driven end-to-end runs (PlayMode timelines), stereo/SPI
 rendering, lens visual, probe audio, Enigma visuals, any on-device behaviour.
+
+## 2026-10-29: figure harness (spec sheet)
+
+`Verification/FigureShotRunner.cs` injects real 26-joint hand poses through
+`SimulatedHandSource.SetScriptedHand`; recognizer and tools react as to tracked hands.
+Exercised end-to-end and captured: cut, peel, probe, pinch-pull extract, chart-dot pinch
+(focus #1713 linked back to its pore), lens, ground-truth view, Enigma peel.
+Not yet exercised: grab, two-hand scale, box brush, wrist twist, reset.
+
+Bugs found and fixed (each with a regression test where testable):
+1. Two flat palms next to the specimen were captured by an already-running one-hand cut
+   (sticky arbitration) → two-hand tools may pre-empt one-hand tools
+   (`InteractionModeControllerTests.TwoHandGesture_PreemptsRunningOneHandTool`).
+2. A precision pinch on a defect was classified as Grab (all-finger pinch too loose), and
+   Grab outranks Extract → all-finger pinch now needs index, middle and ring tips plus
+   curled fingers (`GestureDetectorTests.Grab_RejectedForPrecisionPinchNearSpecimen`).
+3. Lens peel threshold 0.6 was below the CoCr density → lens showed nothing on specimen A;
+   now 0.92, like the strongest peel.
+4. Label plates were back-face culled, then drawn over their text, then the volume drew over
+   labels (same queue, ZTest Always) → plate/text queues ordered after the volume.
+5. Cut ring radius used the cube diagonal (too large); cut label moved off the cut face.
+6. Domain reload during Play mode wiped runtime references → editor set to recompile after
+   playing.
+
+Unity EditMode: 43/43 pass. Console: 0 errors, 0 warnings during the harness run.

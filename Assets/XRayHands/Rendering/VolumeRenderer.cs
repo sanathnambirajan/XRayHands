@@ -44,6 +44,10 @@ namespace XRayHands.Rendering
         private static readonly int LensCentreId = Shader.PropertyToID("_LensCentreWS");
         private static readonly int LensNormalId = Shader.PropertyToID("_LensNormalWS");
         private static readonly int LensRadiusId = Shader.PropertyToID("_LensRadius");
+        private static readonly int LensPeelId = Shader.PropertyToID("_LensPeel");
+
+        /// <summary>Peel threshold inside the magic lens (normalised density).</summary>
+        public const float LensPeelThreshold = 0.92f;
         private static readonly int DefectGlowId = Shader.PropertyToID("_DefectGlow");
         private static readonly int BrickGridId = Shader.PropertyToID("_BrickGrid");
         private static readonly int VolumeDimsId = Shader.PropertyToID("_VolumeDims");
@@ -180,6 +184,9 @@ namespace XRayHands.Rendering
         /// <summary>Activates the magic lens: a disc in world space through which the volume is peeled.</summary>
         public void SetLens(Vector3 centreWS, Vector3 normalWS, float radiusMeters)
         {
+            // Inside the lens, peel as far as the strongest peel gesture does. A fixed 0.6 was
+            // below the density of the CoCr metal, so the lens showed nothing on specimen A.
+            _material.SetFloat(LensPeelId, LensPeelThreshold);
             _material.SetVector(LensCentreId, centreWS);
             _material.SetVector(LensNormalId, normalWS.normalized);
             _material.SetFloat(LensRadiusId, radiusMeters);

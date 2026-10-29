@@ -73,9 +73,43 @@ namespace XRayHands.Input
 
         private Camera Cam => _camera != null ? _camera : (_camera = Camera.main);
 
+        private bool _scripted;
+        private readonly Pose[] _scriptedWrist = new Pose[2];
+        private readonly HandShape[] _scriptedShape = new HandShape[2];
+        private readonly bool[] _scriptedTracked = new bool[2];
+
+        /// <summary>True while hands are driven by <see cref="SetScriptedHand"/> instead of keyboard/mouse.</summary>
+        public bool IsScripted => _scripted;
+
+        /// <summary>
+        /// Drives one hand from a script (verification harness, screenshots, gesture timelines).
+        /// While any hand is scripted, keyboard/mouse input is ignored. The pose goes through the
+        /// same <see cref="HandPoseBuilder"/> and recognizer as every other hand.
+        /// </summary>
+        public void SetScriptedHand(Handedness hand, Pose wrist, HandShape shape, bool tracked = true)
+        {
+            _scripted = true;
+            _scriptedWrist[(int)hand] = wrist;
+            _scriptedShape[(int)hand] = shape;
+            _scriptedTracked[(int)hand] = tracked;
+        }
+
+        /// <summary>Returns control to keyboard and mouse.</summary>
+        public void ClearScriptedHands()
+        {
+            _scripted = false;
+            _scriptedTracked[0] = _scriptedTracked[1] = false;
+        }
+
         /// <inheritdoc/>
         public void Tick(float deltaTime)
         {
+            if (_scripted)
+            {
+                TickScripted(_left, Handedness.Left);
+                TickScripted(_right, Handedness.Right);
+                return;
+            }
             Keyboard kb = Keyboard.current;
             Mouse mouse = Mouse.current;
             if (kb == null || mouse == null || Cam == null)
@@ -186,6 +220,13 @@ namespace XRayHands.Input
             {
                 _left.IsTracked = false;
             }
+        }
+
+        private void TickScripted(HandFrame frame, Handedness hand)
+        {
+            int i = (int)hand;
+            if (!_scriptedTracked[i]) { frame.IsTracked = false; return; }
+            HandPoseBuilder.Build(frame, _scriptedWrist[i], _scriptedShape[i]);
         }
     }
 }

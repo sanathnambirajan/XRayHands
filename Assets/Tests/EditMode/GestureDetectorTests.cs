@@ -138,6 +138,15 @@ namespace XRayHands.Tests
         }
 
         [Test]
+        public void Grab_RejectedForPrecisionPinchNearSpecimen()
+        {
+            // Regression: a thumb-index pinch on a defect must stay a pinch (extract), not a grab.
+            var r = HandFixtures.Hand(Handedness.Right, Inside, Quaternion.identity, HandShape.Pinching);
+            Assert.That(new GrabDetector(_t, Handedness.Right).Evaluate(HandFixtures.Context(null, r)), Is.EqualTo(0f));
+            Assert.That(new PinchDetector(_t, Handedness.Right).Evaluate(HandFixtures.Context(null, r)), Is.EqualTo(1f));
+        }
+
+        [Test]
         public void Grab_RejectedForOpenHandNearSpecimen()
         {
             var r = HandFixtures.Hand(Handedness.Right, Inside, Quaternion.identity, HandShape.Open);

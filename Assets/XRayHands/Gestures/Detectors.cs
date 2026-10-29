@@ -137,6 +137,9 @@ namespace XRayHands.Gestures
     /// </summary>
     public sealed class GrabDetector : HandDetector
     {
+        /// <summary>Minimum mean finger curl for the all-finger-pinch variant of grab.</summary>
+        public const float AllPinchMinMeanCurl = 0.5f;
+
         /// <summary>Creates a grab detector.</summary>
         public GrabDetector(GestureTuning t, Handedness h) : base(t, h) { }
 
@@ -144,11 +147,17 @@ namespace XRayHands.Gestures
         protected override float EvaluateHand(HandFrame f, in GestureContext ctx)
         {
             float fist = Ramp.Above(f.MeanFingerCurl, Tuning.GrabMinMeanCurl, Tuning.GrabMinMeanCurl - Tuning.CurlRampWidth);
-            // "All-finger pinch": thumb tip close to index and middle tips (a cupped grab).
-            float allPinch = Mathf.Min(
-                Ramp.Below(f.PinchDistance, Tuning.PinchEnterDistanceMeters * 1.5f, Tuning.PinchExitDistanceMeters * 1.5f),
-                Ramp.Below(Vector3.Distance(f.Joint(HandJoint.ThumbTip), f.Joint(HandJoint.MiddleTip)),
-                    Tuning.PinchEnterDistanceMeters * 1.5f, Tuning.PinchExitDistanceMeters * 1.5f));
+            // "All-finger pinch": thumb tip close to the index, middle AND ring tips (a cupped
+            // grab). Checking ring too matters: in an ordinary precision pinch the middle tip
+            // also sits within a few cm of the thumb, and with only index+middle checked a pinch
+            // on a defect was classified as Grab, which outranks Extract (found by the figure harness).
+            Vector3 thumb = f.Joint(HandJoint.ThumbTip);
+            float enter = Tuning.PinchEnterDistanceMeters * 1.5f, exit = Tuning.PinchExitDistanceMeters * 1.5f;
+            // A cupped grab also curls the fingers; a precision pinch keeps them fairly straight.
+            float cupped = Ramp.Above(f.MeanFingerCurl, AllPinchMinMeanCurl, AllPinchMinMeanCurl - Tuning.CurlRampWidth);
+            float allPinch = Mathf.Min(Mathf.Min(cupped, Ramp.Below(f.PinchDistance, enter, exit)),
+                Mathf.Min(Ramp.Below(Vector3.Distance(thumb, f.Joint(HandJoint.MiddleTip)), enter, exit),
+                          Ramp.Below(Vector3.Distance(thumb, f.Joint(HandJoint.RingTip)), enter, exit)));
             float shape = Mathf.Max(fist, allPinch);
             float maxD = Tuning.GrabMaxSurfaceDistanceMeters;
             float near = Ramp.Below(ctx.DistanceToSpecimen(f.PalmPosition), maxD, maxD + Tuning.DistanceRampWidthMeters);

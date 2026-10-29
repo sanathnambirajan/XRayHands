@@ -184,9 +184,14 @@ namespace XRayHands.Interaction
             float metresFromCentre = Vector3.Dot(p - centre, n);
             float mmPerMetre = PhysicalUnits.MillimetresPerMetre / _host.DisplayScale; // world metres → physical mm
             PlaneOffsetMm = metresFromCentre * mmPerMetre;
-            float ringRadius = 0.5f * proxy.lossyScale.magnitude;
-            _fx.ShowCutRing(centre + n * metresFromCentre, n, ringRadius);
-            _fx.ShowLabel(LabelKey, p + Vector3.up * 0.06f, $"cut {PlaneOffsetMm:+0.000;-0.000} mm  w {width:0.00}");
+            // Ring just outside the specimen's half-extent: marks the plane without dwarfing it.
+            Vector3 s = proxy.lossyScale;
+            float ringRadius = 0.6f * Mathf.Max(s.x, Mathf.Max(s.y, s.z));
+            Vector3 ringCentre = centre + n * metresFromCentre;
+            _fx.ShowCutRing(ringCentre, n, ringRadius);
+            // Label on the ring's top edge, so it never covers the cut face being inspected.
+            Vector3 upInPlane = Vector3.ProjectOnPlane(Vector3.up, n).normalized;
+            _fx.ShowLabel(LabelKey, ringCentre + upInPlane * (ringRadius + 0.02f), $"cut {PlaneOffsetMm:+0.000;-0.000} mm  w {width:0.00}");
             return true;
         }
 

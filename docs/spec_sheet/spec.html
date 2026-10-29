@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>07_XRayHands – Specification Sheet</title>
+<link rel="stylesheet" href="spec.css">
+</head>
+<body>
+
+<!-- ======================================================================= PAGE 1: CONCEPT -->
+<section class="page">
+  <div class="head">
+    <div class="group"><b>Group 07</b><br>Mithulram Gunasekaran (116787)<br>Sanath Nambirajan (119546)</div>
+    <div class="right">6172 Immersive Analytics · WiSe 26/27 · Part 1 – Specification Sheet<br><b style="color:var(--ink)">02.11.2026</b></div>
+  </div>
+  <div class="title">X-Ray Hands: <span class="accent">Embodied Volumetric Inspection</span> of Hidden Defects in CT Data</div>
+  <div class="subtitle">Cut, peel, probe, see through and pull pores out of real industrial X-ray CT scans with bare hands, in mixed reality on Meta Quest 3. No menus, no controllers.</div>
+
+  <div class="cols">
+    <div class="col">
+      <h2>Goal</h2>
+      <p>Inspecting industrial X-ray CT (XCT) scans for pores and cracks usually means scrolling 2D slices or orbiting a rendering with mouse and menus; the 3D arrangement of defects must be assembled in the head.</p>
+      <p><b>X-Ray Hands</b> places the scanned specimen in the user's real room and makes the bare hands the only instrument: a flat palm is the cutting plane and the cut face shows the true CT slice; two facing palms peel away low-density material; an index finger probes grey values with spatial sound; a pinch-and-pull extracts every segmented defect into a linked 3D scatter plot. This answers Challenge 2, <i>“Beyond Point-and-Click”</i>: each function is an embodied 3D gesture with visible and audible feedback, and there are no floating 2D panels. The aim: <b>find, compare and judge defects</b> (tasks T1–T4) in one workflow linking volume and feature views.</p>
+
+      <h2>Design Considerations <span class="sub">why immersive</span></h2>
+      <ul>
+        <li><b>Spatial structure stays spatial.</b> Stereo and motion parallax show the 3D distribution of thousands of pores directly <a href="#r1">[1]</a>.</li>
+        <li><b>The hand is the cutting plane.</b> Position and orientation change at the speed of the hand; no slider per axis.</li>
+        <li><b>Multisensory probe.</b> Grey value as pitch, pore proximity as Geiger clicks at the fingertip, mirrored by a ring pulse.</li>
+        <li><b>SciVis → InfoVis in one space.</b> Defects fly from the specimen into the chart, keeping object identity <a href="#r5">[5]</a>; selection is linked both ways <a href="#r3">[3]</a>.</li>
+        <li><b>Positioning.</b> In-situ AR registers XCT results to a physical sample <a href="#r6">[6]</a>; we focus on bare-hand manipulation of the volume and linked defect analytics.</li>
+      </ul>
+      <div class="box small" style="padding:1.4mm 2.2mm">
+        <div class="kv" style="font-size:8.2pt">
+          <div class="k">T1 Locate</div><div>where do pores cluster? → cut, peel, lens</div>
+          <div class="k">T2 Characterize</div><div>size, shape, class? → probe, tooltip, chart</div>
+          <div class="k">T3 Compare</div><div>large + irregular, where? → brush chart ⇄ specimen</div>
+          <div class="k">T4 Validate</div><div>agrees with reference? → TP / FP / FN view</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <h2>MockUps <span class="sub">real captures from the running app (simulated hands)</span></h2>
+      <figure>
+        <div class="frame" style="height:66mm"><img src="img/fig/fig_cut.png" alt="Palm cut">
+          <span class="call r" id="c1a">true CT slice on the cut face</span>
+          <span class="call l c" id="c1b">palm = cutting plane</span>
+          <span class="call l" id="c1c">pores, class-tinted</span>
+        </div>
+        <figcaption><b>Fig. 1</b> Flat-palm cut through specimen A (NIST CoCr): the half between plane and user is removed; the face shows windowed grey values with defects tinted by class. <span class="tag done">implemented</span></figcaption>
+      </figure>
+      <div class="grid2">
+        <figure>
+          <div class="frame" style="height:39mm"><img src="img/fig/fig_peel.png" alt="Two-palm peel"></div>
+          <figcaption><b>Fig. 2</b> Two facing palms peel the metal to glass; pores stay. <span class="tag done">implemented</span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame" style="height:39mm"><img src="img/fig/fig_lens.png" alt="Magic lens">
+            <span class="call l" id="c3a">ring = lens</span>
+          </div>
+          <figcaption><b>Fig. 3</b> “O” hand as X-ray magic lens: peeled inside, solid outside <a href="#r2">[2]</a>. <span class="tag done">implemented</span></figcaption>
+        </figure>
+      </div>
+      <div class="box cyan">
+        <div class="kv">
+          <div class="k">Device</div><div><b>Meta Quest 3</b>, mixed reality (colour passthrough) + hand tracking via OpenXR. Fallback: PCVR over Quest Link on a lab RTX PC.</div>
+          <div class="k">Data</div><div>A: NIST AM CoCr sample (XCT, 2.45 µm) + reference pores. B: Enigma I rotors (XCT, 0.181 mm). See p. 2.</div>
+          <div class="k">Legend</div><div><span class="tag done">implemented</span> real capture · <span class="tag part">unverified</span> code exists, not yet checked · <span class="tag plan">planned</span> not built yet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>X-Ray Hands · Group 07</span><span>1 / 3 · Concept</span></div>
+</section>
+
+<!-- ======================================================================= PAGE 2: DATA + VIS -->
+<section class="page">
+  <div class="runner"><span><b>Group 07</b> · Mithulram Gunasekaran (116787) · Sanath Nambirajan (119546)</span><span>X-Ray Hands · 02.11.2026</span></div>
+  <div class="cols even">
+    <div class="col">
+      <h2>Dataset and Format</h2>
+      <table>
+        <tr><th></th><th>A · NIST AM CoCr, set 1 sample 2</th><th>B · Enigma I rotors</th></tr>
+        <tr><td>Source</td><td>NIST mds2-2162, doi:10.18434/M32162 <a href="#d1">[D1]</a></td><td>Deutsches Museum Inv. 1993-522; CT by Fraunhofer IIS/EZRT; doi:10.5281/zenodo.8232721 <a href="#d2">[D2]</a></td></tr>
+        <tr><td>License</td><td>NIST open license</td><td>CC BY-SA 4.0 (record lists CC BY 4.0)</td></tr>
+        <tr><td>Original</td><td>900 slices of 980 × 1010 px, 2.45 µm, 16-bit TIFF + reference pore segmentation</td><td>549 slices of 551 × 784 px, 0.181 mm, 16-bit DICOM (rotor ROI)</td></tr>
+        <tr><td>Used</td><td>central 640³ crop, 1.57 mm cube (fits 16 GB RAM at full res.)</td><td>full ROI, cropped to the object</td></tr>
+        <tr><td>Processed</td><td>214³ voxels at 7.35 µm</td><td>125 × 196 × 135 voxels at 0.72 mm</td></tr>
+        <tr><td>Labels</td><td><b>2 910 pores</b> (2 775 gas pores, 132 lack-of-fusion, 3 crack-like), Ø 6–100 µm; + 800 missed reference pores for the ground-truth view</td><td><b>790 parts</b>: connected components in 3 attenuation bins (317 / 375 / 98)</td></tr>
+        <tr><td>Format</td><td colspan="2"><span class="mono">volume_u8.raw</span> 8-bit · <span class="mono">labels_u16.raw</span> id per voxel · <span class="mono">features.csv</span> one row per id · <span class="mono">meta.json</span> dims, spacing, window, materials, chart axes, license</td></tr>
+      </table>
+
+      <h3>Pipeline <span class="muted small">(Python; segmentation at full resolution)</span></h3>
+      <div class="pipe">
+        <div class="step"><b><span class="n">1</span>CT scan</b>16-bit stack; spacing from README / DICOM; checksums verified.</div>
+        <div class="step"><b><span class="n">2</span>Segmentation</b>3³ median; <b>ISO50</b> threshold (Otsu fails: &lt; 1 % pores, unimodal); hole fill → enclosed air = pores; 26-conn., ≥ 8 vox.</div>
+        <div class="step"><b><span class="n">3</span>Features</b>volume, Ø<sub>eq</sub>, sphericity ψ, elongation √(λ<sub>max</sub>/λ<sub>min</sub>), centroid, build height; class; TP/FP/FN.</div>
+        <div class="step"><b><span class="n">4</span>Unity</b>area-mean intensity, max-pool labels; gradient + 8³ brick grid baked at load.</div>
+      </div>
+      <p class="small muted" style="margin-top:1.2mm">28 pytest tests on synthetic shapes (volume ±3 %, ψ ≥ 0.95). Versus the NIST reference (3 176 pores): <b>precision 0.90, recall 0.75, voxel IoU 0.59</b>. Chart z-axis = build height, not depth below surface: an interior tomography has no part surface in the data.</p>
+      <figure>
+        <div class="frame" style="height:31mm"><img src="img/fig/fig_extract_flight.png" alt="Extraction">
+          <span class="call r" id="c4a">defects leave the specimen</span>
+          <span class="call l" id="c4b">…and land in the chart</span>
+        </div>
+        <figcaption><b>Fig. 4</b> Pinch a pore and pull: all 2 910 pores fly on staggered arcs into the 3D scatter plot. <span class="tag done">implemented</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="col">
+      <h2>Selected Visualizations</h2>
+      <div class="tech">
+        <div class="k">GPU direct volume rendering</div><div class="v">ray marching, front-to-back, opacity correction, early exit, 8³ empty-space skipping, baked gradients <a href="#r4">[4]</a>; designed for a mobile GPU <span class="tag done">impl.</span></div>
+        <div class="k">Clip plane, CT slice face</div><div class="v">the cut shows real grey values, as in a CT slice viewer <span class="tag done">impl.</span></div>
+        <div class="k">Density-peel transfer fn.</div><div class="v">low density → glass with silhouettes; defects stay <span class="tag done">impl.</span></div>
+        <div class="k">Magic lens</div><div class="v">focus + context without losing the outer shape <a href="#r2">[2]</a> <span class="tag done">impl.</span></div>
+        <div class="k">Label-volume highlighting</div><div class="v">per-id colour table: class, selection, ghosting <span class="tag done">impl.</span></div>
+        <div class="k">Linked 3D scatter</div><div class="v">log₁₀ volume × ψ × build height; animated SciVis→InfoVis transition <a href="#r5">[5]</a> <span class="tag done">impl.</span></div>
+        <div class="k">Brushing &amp; linking</div><div class="v">pinch dot ⇄ pinch defect <span class="tag done">impl.</span>; two-hand box brush <a href="#r3">[3]</a> <span class="tag part">unverified</span></div>
+        <div class="k">Ground-truth comparison</div><div class="v">TP / FP / FN colours + precision / recall / IoU in space <span class="tag done">impl.</span></div>
+        <div class="k">Spatial sonification</div><div class="v">pitch = grey value, click rate = pore proximity <span class="tag part">unverified</span></div>
+        <div class="k">Slice cards (2D-in-3D)</div><div class="v">freeze a cut as a tangible card to compare <span class="tag plan">planned</span></div>
+      </div>
+      <h2>MockUps <span class="sub">continued</span></h2>
+      <figure>
+        <div class="frame" style="height:46mm"><img src="img/fig/fig_chart_linked.png" alt="Linked chart">
+          <span class="call l" id="c5b">ψ drops with volume</span>
+        </div>
+        <figcaption><b>Fig. 5</b> Linked scatter (dot size scales with pore size, colour = class). The pinched dot, the largest pore (crack-like, ψ 0.49), is linked to its pore by a dashed line and tooltip. <span class="tag done">implemented</span></figcaption>
+      </figure>
+      <div class="grid2">
+        <figure>
+          <div class="frame" style="height:31mm"><img src="img/fig/fig_groundtruth.png" alt="Ground truth"></div>
+          <figcaption><b>Fig. 6</b> Ground-truth view: <span class="swatch" style="background:#4DA6FF"></span>TP <span class="swatch" style="background:#FF9A3D"></span>FP <span class="swatch" style="background:#E040FB"></span>FN. <span class="tag done">impl.</span></figcaption>
+        </figure>
+        <figure>
+          <div class="frame" style="height:31mm"><img src="img/fig/fig_enigma_peel.png" alt="Enigma"></div>
+          <figcaption><b>Fig. 7</b> Specimen B (Enigma rotors), peeled: parts by attenuation. <span class="tag done">impl.</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Colours: interaction <span class="swatch" style="background:#0E8FC4"></span> · defect classes <span class="swatch" style="background:#E5483B"></span>crack <span class="swatch" style="background:#F08A2B"></span>lack of fusion <span class="swatch" style="background:#E8B931"></span>gas pore</span><span>2 / 3 · Data and Visualization</span></div>
+</section>
+
+<!-- ======================================================================= PAGE 3: INTERACTION + IMPLEMENTATION -->
+<section class="page">
+  <div class="runner"><span><b>Group 07</b> · Mithulram Gunasekaran (116787) · Sanath Nambirajan (119546)</span><span>X-Ray Hands · 02.11.2026</span></div>
+  <h2>Design Considerations <span class="sub">gesture vocabulary: bare hands only; each gesture has a visible affordance, a recognition sound and hysteresis</span></h2>
+  <div class="gestures" style="margin:1.8mm 0 2mm 0">
+    <div class="g"><div class="icon"><img src="img/fig/g_grab.png"></div><div class="name">Grab</div><div class="act">fist near specimen → move &amp; rotate</div><div class="fb">rigid follow, no jump</div></div>
+    <div class="g"><div class="icon"><img src="img/fig/g_scale.png"></div><div class="name">Two-hand scale</div><div class="act">pinch both, pull apart → scale about midpoint</div><div class="fb">“×159” true magnification</div></div>
+    <div class="g"><div class="icon"><img src="img/fig/g_cut.png"></div><div class="name">Flat-palm cut</div><div class="act">palm through specimen → clip plane</div><div class="fb">CT slice face, ring, “cut … mm”</div></div>
+    <div class="g"><div class="icon"><img src="img/fig/g_peel.png"></div><div class="name">Two-palm peel</div><div class="act">palms facing, spread → density threshold</div><div class="fb">dashed line, “Peel %”</div></div>
+    <div class="g"><div class="icon"><img src="img/fig/g_probe.png"></div><div class="name">Point probe</div><div class="act">index into volume → grey value, material, nearest pore</div><div class="fb">label, tone + clicks, ring pulse</div></div>
+    <div class="g"><div class="icon"><img src="img/fig/g_extract.png"></div><div class="name">Pinch-pull extract</div><div class="act">pinch a pore, pull 12 cm → defects into chart</div><div class="fb">staggered flight animation</div></div>
+    <div class="g"><div class="icon"><img src="img/fig/g_brush.png"></div><div class="name">Chart pinch / brush</div><div class="act">pinch a dot, or both hands span a box</div><div class="fb">glow, link line, “N selected”</div></div>
+    <div class="g"><div class="icon"><img src="img/fig/g_lens.png"></div><div class="name">O-lens</div><div class="act">thumb–index ring held up → X-ray lens</div><div class="fb">peeled disc in view</div></div>
+    <div class="g"><div class="icon"><img src="img/fig/g_twist.png"></div><div class="name">Wrist-twist contrast</div><div class="act">roll wrist while cutting → window width</div><div class="fb">×2 per 45°, value label</div></div>
+    <div class="g"><div class="icon"><img src="img/fig/g_reset.png"></div><div class="name">Reset</div><div class="act">palm up, close fist, hold 0.6 s</div><div class="fb">confirmation ripple</div></div>
+    <div class="g"><div class="icon planned"><img src="img/fig/g_extract.png"></div><div class="name">Slice card <span class="tag plan">planned</span></div><div class="act">pinch cut-face edge, pull → 2D card</div><div class="fb">card placed on table</div></div>
+    <div class="g"><div class="icon planned"><img src="img/fig/g_grab.png"></div><div class="name">Specimen shelf <span class="tag plan">planned</span></div><div class="act">grab a miniature → load specimen</div><div class="fb">assemble animation</div></div>
+  </div>
+
+  <div class="cols even">
+    <div class="col">
+      <p class="small" style="margin:0">One recognizer serves all gestures: pure-C# detectors output a 0–1 confidence (fuzzy AND of soft thresholds); a hysteresis state machine enters at ≥ 0.95 and exits at ≤ 0.05 after hold times (pinch 2.0 / 3.5 cm, flat palm 150 ms, lens 250 ms, reset 0.6 s); one tool owns the hands at a time. The simulated-hand figure harness found and fixed three conflicts: a peel captured by a running cut, a precision pinch read as grab, a lens threshold below the metal density. Exercised end-to-end in the harness: cut, peel, probe, extract, chart pinch, lens; implemented but not yet exercised: grab, scale, brush, twist, reset. <span class="tag part">tuning on Quest 3 pending</span></p>
+      <h2>Implementation, External Libraries</h2>
+      <div class="kv">
+        <div class="k">Engine</div><div>Unity <span class="mono">6000.3.27f1</span> (6.3 LTS), URP <span class="mono">17.3.0</span>, Input System <span class="mono">1.20.1</span>, TextMesh Pro (uGUI <span class="mono">2.0.0</span>)</div>
+        <div class="k">XR</div><div>OpenXR <span class="mono">1.18.0</span>, Unity OpenXR: Meta <span class="mono">2.7.0</span>, AR Foundation <span class="mono">6.6.0</span> (passthrough), XR Hands <span class="mono">1.10.0</span>, XR Management <span class="mono">4.7.0</span>; single-pass instanced, Vulkan, IL2CPP ARM64; Quest APK builds (89.7 MB)</div>
+        <div class="k">Python 3.11</div><div>numpy <span class="mono">2.4.6</span>, scipy <span class="mono">1.17.1</span>, scikit-image <span class="mono">0.26.0</span>, pydicom <span class="mono">3.0.2</span>, tifffile, connected-components-3d, pandas</div>
+        <div class="k">Own modules</div><div>gesture recognizer, HLSL ray marcher + volume renderer, interaction tools, selection model + 3D chart, probe sonifier, data pipeline</div>
+        <div class="k">Testing</div><div>28 pytest + 43 NUnit EditMode tests (detectors incl. near-misses and jitter; tool arbitration); scripted hand-pose figure harness <span class="tag done">impl.</span>; PlayMode gesture timelines, 360° screenshot harness, on-device profiling <span class="tag plan">planned</span></div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="grid2" style="gap:4mm">
+        <div>
+          <h3 style="margin-top:0">Risks and mitigation</h3>
+          <ul class="small" style="padding-left:3.4mm">
+            <li><b>Quest GPU cost</b> per eye → step tiers 96 / 160 / 256, empty-space skipping, ≤ 256³; frame times not yet measured.</li>
+            <li><b>False positives</b> → hysteresis, hold times, two-hand pre-emption, one tuning asset, regression tests.</li>
+            <li><b>Data size</b> → crop at full res., then downsample; volumes in Git LFS.</li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="margin-top:0">Timeline</h3>
+          <div class="timeline" style="grid-template-columns: repeat(3, 1fr); row-gap: 1.5mm">
+            <div class="ms done"><b>02.11.</b>spec sheet</div>
+            <div class="ms"><b>23.11.</b>Tier 1 on device</div>
+            <div class="ms"><b>14.12.</b>progress video</div>
+            <div class="ms"><b>11.01.</b>Tier 2</div>
+            <div class="ms"><b>25.01.</b>implementation</div>
+            <div class="ms"><b>01.02.</b>presentation</div>
+          </div>
+        </div>
+      </div>
+      <h3>References</h3>
+      <div class="refs">
+        <div id="r1">[1] T. Chandler, M. Cordeil, T. Czauderna, T. Dwyer et al. Immersive Analytics. <i>BDVA</i> 2015, 73–80. doi:10.1109/BDVA.2015.7314296</div>
+        <div id="r2">[2] E. A. Bier, M. C. Stone, K. Pier, W. Buxton, T. D. DeRose. Toolglass and Magic Lenses: The See-Through Interface. <i>SIGGRAPH ’93</i>, 73–80. doi:10.1145/166117.166126</div>
+        <div id="r3">[3] J. Weissenböck, A. Amirkhanov, W. Li, …, C. Heinzl. FiberScout. <i>IEEE PacificVis</i> 2014, 153–160. doi:10.1109/PacificVis.2014.52</div>
+        <div id="r4">[4] J. Krüger, R. Westermann. Acceleration Techniques for GPU-based Volume Rendering. <i>IEEE Visualization</i> 2003, 287–292. doi:10.1109/VISUAL.2003.1250384</div>
+        <div id="r5">[5] Y. Yang, T. Dwyer, K. Marriott, B. Jenny, S. Goodwin. Tilt Map. <i>IEEE TVCG</i> 27(12):4507–4519, 2021. doi:10.1109/TVCG.2020.3004137</div>
+        <div id="r6">[6] A. Gall, A. Heim, C. Heinzl. Immersive Inspection: Intuitive Material Analysis using X-Ray CT Data in AR. <i>J. Nondestr. Eval.</i> 44(3), 2025. doi:10.1007/s10921-025-01220-x</div>
+        <div id="d1">[D1] F. H. Kim, E. J. Garboczi, S. P. Moylan, J. Slotwinski. NIST, 2020. doi:10.18434/M32162</div>
+        <div id="d2">[D2] M. Göggerle, N. Reims. Cipher Machine Enigma I. Zenodo, 2023. doi:10.5281/zenodo.8232721</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Figures regenerated by Assets/XRayHands/Verification/FigureShotRunner.cs</span><span>3 / 3 · Interaction and Implementation</span></div>
+</section>
+
+<script>
+// Layout check used by build.py (?check): how far the last element of each column ends
+// below the top of the page footer, in mm. Positive = overflow. Does nothing when printing.
+if (location.search.includes("check")) {
+  document.fonts.ready.then(() => {
+    const mm = px => Math.round(px * 25.4 / 96 * 10) / 10;
+    const out = [...document.querySelectorAll(".page")].map((p, i) => {
+      const footTop = p.querySelector(".foot").getBoundingClientRect().top;
+      const blocks = [...p.querySelectorAll(".col")];
+      if (!blocks.length) blocks.push(p);
+      const strip = p.querySelector(".gestures");
+      return { page: i + 1, cols: blocks.map(c => mm([...c.children].pop().getBoundingClientRect().bottom - footTop)) };
+    });
+    const pre = document.createElement("pre");
+    pre.id = "layout-check";
+    pre.textContent = JSON.stringify(out);
+    document.body.appendChild(pre);
+  });
+}
+</script>
+</body>
+</html>

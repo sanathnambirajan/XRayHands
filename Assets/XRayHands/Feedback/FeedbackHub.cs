@@ -16,6 +16,11 @@ namespace XRayHands.Feedback
         private const float PulseSeconds = 0.35f;
         private const int SampleRate = 44100;
 
+        // Labels must draw after the volume (queue 3000, ZTest Always): with the same queue
+        // the ray marcher sometimes composited over the text and labels looked faint.
+        // Plate first (LabelQueue - 10), then text (LabelQueue).
+        private const int LabelQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent + 100;
+
         private static readonly Color PlateColour = new Color(0.05f, 0.06f, 0.08f, 0.78f);
         private static readonly Color TextColour = new Color(0.9f, 0.94f, 1f);
         private static readonly Color LineColour = new Color(0.62f, 0.85f, 1f, 0.9f);
@@ -47,6 +52,9 @@ namespace XRayHands.Feedback
             SetTransparent(_dashMaterial);
             _plateMaterial = new Material(unlit) { color = PlateColour };
             SetTransparent(_plateMaterial);
+            // Neither plate nor TMP text writes depth, so draw order decides: the plate must
+            // render before the text (TMP uses the default transparent queue 3000).
+            _plateMaterial.renderQueue = LabelQueue - 10;
             _cutRing = CreateLine("CutRing", _lineMaterial, RingSegments, true);
             _cutRing.enabled = false;
 
@@ -166,6 +174,7 @@ namespace XRayHands.Feedback
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.rectTransform.sizeDelta = new Vector2(0.16f, 0.04f);
             tmp.textWrappingMode = TextWrappingModes.NoWrap;
+            tmp.fontMaterial.renderQueue = LabelQueue; // instance material, see LabelQueue
             go.AddComponent<Analytics.FaceCamera>();
 
             // Dark translucent plate behind the text for contrast against passthrough.
@@ -173,8 +182,10 @@ namespace XRayHands.Feedback
             Destroy(plate.GetComponent<Collider>());
             plate.name = "Plate";
             plate.transform.SetParent(go.transform, false);
+            // FaceCamera points the label's +Z away from the camera, so the camera sees its -Z
+            // side, which is exactly the side a Unity quad renders. No extra rotation: a 180°
+            // turn made the plate back-face-culled (invisible), found in the figure screenshots.
             plate.transform.localPosition = new Vector3(0f, 0f, 0.001f);
-            plate.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
             plate.transform.localScale = new Vector3(0.17f, 0.045f, 1f);
             plate.GetComponent<MeshRenderer>().sharedMaterial = _plateMaterial;
             return tmp;
