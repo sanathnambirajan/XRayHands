@@ -142,9 +142,13 @@ Shader "XRayHands/XRayVolume"
                 return (int)round(rg.r * 255.0) + 256 * (int)round(rg.g * 255.0);
             }
 
+            // Unsigned integer divide/modulus: signed ones compile to slow multi-instruction
+            // sequences on mobile GPUs, and this runs for every defect sample.
             float4 IdColour(int id)
             {
-                float2 uv = float2((id % (int)_IdLutSize.x) + 0.5, (id / (int)_IdLutSize.x) + 0.5) * _IdLutSize.zw;
+                uint uid = (uint)id;
+                uint width = (uint)_IdLutSize.x;
+                float2 uv = float2((uid % width) + 0.5, (uid / width) + 0.5) * _IdLutSize.zw;
                 return SAMPLE_TEXTURE2D_LOD(_IdLut, my_point_clamp_sampler, uv, 0);
             }
 

@@ -12,7 +12,8 @@ Status legend: ✅ done and verified · 🟡 implemented, not yet verified end-t
 | git + Unity .gitignore + LFS .gitattributes | ✅ | no remote yet (ask before creating) |
 | MCP for Unity | ✅ | console, hierarchy, tests, screenshots all driven through MCP |
 | Meta agentic tools: meta-vr plugin 2.0.0 | ✅ | marketplace is named `meta-vr` (install id `meta-vr@meta-vr`); skills load after a Claude Code restart |
-| metavr MCP (`npx -y metavr mcp install claude-code`) | 🔒 | blocked by the agent's permission policy (runs downloaded npm code); run it yourself |
+| metavr MCP | ✅ | provided by the meta-vr plugin itself (tools `mcp__plugin_meta-vr_metavr__*`), no separate npx install needed |
+| Quest APK | ✅ | `XRayHands → Build Quest APK` or batch mode: `Unity.exe -batchmode -quit -projectPath . -executeMethod XRayHands.EditorTools.BuildScript.BuildQuest`; 89.7 MB, 0 errors; not yet run on a headset |
 | OpenXR, Meta OpenXR 2.7.0, XR Hands 1.10.0, AR Foundation 6.6.0 | ✅ | versions resolved by the Unity package manager for 6000.3 |
 | OpenXR loader + Meta Quest feature + hand tracking + passthrough | ✅ | `XRayHands → Configure XR + Player (Quest)` (Editor/ProjectSetup.cs), reproducible on lab PCs; OpenXR validation: 0 errors, 1 benign warning (SSAO disabled but not removed) |
 | Player settings (ARM64, IL2CPP, Vulkan, SPI, linear, API 32, MSAA 4×) | ✅ | 72 Hz is the Quest 3 default; fixed foveation still ⬜ |
