@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>X-Ray Hands Oral Exam Guide</title>
+<style>
+  @page { size: A4; margin: 15mm 16mm 15mm; }
+  :root { --ink:#1a2230; --muted:#5b6676; --line:#d9dee6; --accent:#1b7fb0; --soft:#f2f6f9; --warn:#a36a00; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:"Segoe UI", Calibri, Arial, sans-serif; font-size:10.2pt; line-height:1.45; color:var(--ink); background:#fff; }
+  h1 { font-size:22pt; margin:0; }
+  h1 span { color:var(--accent); }
+  .sub { color:var(--muted); font-size:11pt; margin:2px 0 12px; }
+  h2 { font-size:13pt; color:var(--accent); margin:18px 0 7px; padding-bottom:3px; border-bottom:2px solid var(--accent); break-after:avoid; }
+  h3 { font-size:10.6pt; margin:10px 0 3px; break-after:avoid; }
+  p { margin:0 0 6px; }
+  ul, ol { margin:0 0 6px; padding-left:18px; }
+  li { margin-bottom:2px; }
+  table { width:100%; border-collapse:collapse; margin:4px 0 8px; font-size:9.4pt; }
+  th, td { text-align:left; vertical-align:top; padding:4px 7px; border-bottom:1px solid var(--line); }
+  th { background:var(--soft); font-weight:600; }
+  tr { break-inside:avoid; }
+  code { font-family:Consolas, monospace; font-size:8.8pt; background:var(--soft); padding:0 3px; border-radius:2px; }
+  .box { background:var(--soft); border-left:3px solid var(--accent); padding:8px 11px; border-radius:3px; margin:6px 0 8px; break-inside:avoid; }
+  .warn { border-left-color:var(--warn); background:#fbf5e8; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  figure { margin:4px 0 8px; break-inside:avoid; }
+  figure img { width:100%; height:150px; object-fit:cover; display:block; border-radius:4px; background:#11141b; }
+  figcaption { font-size:8.5pt; color:var(--muted); margin-top:3px; }
+  .flow { font-family:Consolas, monospace; font-size:8.6pt; background:#0f1724; color:#d6e6f5; padding:10px 12px; border-radius:4px; white-space:pre; line-height:1.5; break-inside:avoid; }
+  .q { break-inside:avoid; margin:0 0 8px; }
+  .q b { display:block; }
+  .q .a { color:#2c3a4d; }
+  .num td:first-child { width:42%; font-weight:600; }
+  .page-break { break-before:page; }
+</style>
+</head>
+<body>
+
+<h1>X-Ray Hands: <span>oral exam guide</span></h1>
+<div class="sub">Group 07 &middot; 6172 Immersive Analytics &middot; WiSe 2026/27 &middot; Mithulram Gunasekaran, Sanath Nambirajan</div>
+
+<h2>1. The project in 30 seconds</h2>
+<div class="box">
+<p><b>Problem:</b> engineers check X-ray CT scans of metal parts for hidden defects (pores, cracks). Normally they scroll through hundreds of 2D slices with a mouse.</p>
+<p><b>Our solution:</b> the scanned part floats in front of you in your real room (Meta Quest 3, passthrough). You explore it with <b>bare hands only</b>, with no menus and no controllers. You <b>cut</b> it with a flat palm, <b>peel</b> it with two palms, <b>probe</b> it with a finger (with sound), look through an <b>X-ray lens</b>, and <b>pinch and pull</b> a pore so all pores fly out into a <b>linked 3D scatter plot</b>.</p>
+<p style="margin:0"><b>Challenge:</b> C2 "Beyond Point-and-Click": natural 3D interaction instead of 2D menus.</p>
+</div>
+
+<div class="two">
+  <figure><img src="../spec_sheet/img/fig/fig_cut.png" alt=""><figcaption>Cut: the palm is the cutting plane, the face shows the real CT slice.</figcaption></figure>
+  <figure><img src="../spec_sheet/img/fig/fig_chart_linked.png" alt=""><figcaption>Linked chart: picking a dot lights up its pore in the part.</figcaption></figure>
+</div>
+
+<h2>2. What we did, from start to end</h2>
+<table>
+  <tr><th style="width:5%">#</th><th style="width:25%">Step</th><th>What we did</th></tr>
+  <tr><td>1</td><td>Chose the idea</td><td>Picked challenge C2, using the lecturers' own example "volumetric slicing with body gestures (CT/MRI)". It also fits Prof. Heinzl's field (industrial CT, porosity analysis).</td></tr>
+  <tr><td>2</td><td>Set up the tools</td><td>Unity 6.3 LTS (URP), Android build support, Git with LFS (for the large data files), and a Python 3.11 environment.</td></tr>
+  <tr><td>3</td><td>Got the data</td><td>Downloaded one NIST metal sample (with NIST's own pore segmentation as ground truth) and the Enigma rotor scan from Zenodo. Checked the files' checksums.</td></tr>
+  <tr><td>4</td><td>Data pipeline (Python)</td><td>Crop &rarr; denoise &rarr; find the pores (ISO50 threshold) &rarr; measure each pore &rarr; compare with NIST &rarr; shrink for display &rarr; write 4 files Unity can load. 28 tests.</td></tr>
+  <tr><td>5</td><td>Volume renderer</td><td>Wrote our own shader that draws the CT scan as a see-through 3D object (ray marching), with speed-ups for the Quest's mobile GPU.</td></tr>
+  <tr><td>6</td><td>Hands</td><td>One hand model (26 joints) used both for real Quest hand tracking and for keyboard/mouse "simulated hands", so we can test without a headset.</td></tr>
+  <tr><td>7</td><td>Gestures</td><td>Rule-based detectors (pinch, flat palm, peel, point, grab, lens "O", reset), with hysteresis so they don't flicker.</td></tr>
+  <tr><td>8</td><td>Tools</td><td>Grab, scale, cut, contrast dial, peel, probe, lens, reset, extract, chart select, brush. Only one main tool runs at a time.</td></tr>
+  <tr><td>9</td><td>Analytics</td><td>3D scatter plot of all pores, linked selection both ways, ground-truth view (correct / false / missed).</td></tr>
+  <tr><td>10</td><td>Sound</td><td>The probe makes a tone whose pitch follows the density, plus clicks that speed up near a pore.</td></tr>
+  <tr><td>11</td><td>Quest setup</td><td>OpenXR, hand tracking, passthrough and Android settings; built a Quest app file (APK, 89.7 MB).</td></tr>
+  <tr><td>12</td><td>Testing</td><td>43 Unity tests and 28 Python tests pass. Scripted "fake hands" drive the real gesture code to take screenshots. Bugs found this way were fixed (see Q22).</td></tr>
+  <tr><td>13</td><td>Spec sheet</td><td>3-page specification sheet submitted on Stud.IP (<code>G07_XRayHands.pdf</code>).</td></tr>
+</table>
+
+<div class="box warn">
+<b>Not done yet (say this honestly if asked):</b>
+<ul style="margin-bottom:0">
+  <li>Not tested on a real Quest 3. Everything was checked in the Unity editor with simulated hands. The lab test script is <code>docs/DEVICE_TEST.md</code>.</li>
+  <li>Grab, scale, brush, wrist twist and reset are coded but not tested end to end.</li>
+  <li>Not started: specimen shelf, slice cards, automatic quality setting, progress video, performance report.</li>
+</ul>
+</div>
+
+<h2>3. How the pieces fit together</h2>
+<div class="flow">CT scan ──(Python, tools/)──► volume_u8.raw + labels_u16.raw + features.csv + meta.json
+                                                  │  (loaded from StreamingAssets)
+                                                  ▼
+Real hands (Quest) ┐
+                   ├─► IHandSource ─► HandFrame ─► GestureRecognizer ─► InteractionModeController ─► Tool
+Keyboard + mouse   ┘                 (26 joints)   (detectors +          (one main tool at a time)    │
+                                                    hysteresis)                                         ▼
+                 VolumeRenderer (shader)  ◄──────  SelectionModel  ──────►  DefectChart3D (3D chart)
+
+Everything is created and connected in App/Bootstrap.cs ("composition root").</div>
+
+<p><b>In plain words:</b> Python prepares the data once. In the app, hand data comes in, gestures are recognised, the controller picks one tool, and the tool changes what the shader shows or what is selected. The selection is shared, so the part and the chart always agree.</p>
+
+<h2>4. Code map: "which part of the code does this?"</h2>
+<table>
+  <tr><th style="width:30%">If they ask about&hellip;</th><th style="width:35%">Show this file</th><th>What it does there</th></tr>
+  <tr><td>Finding the pores</td><td><code>tools/preprocess.py</code> &rarr; <code>iso50_threshold()</code><br><code>tools/segment.py</code> &rarr; <code>enclosed_air()</code></td><td>Picks the grey value halfway between air and metal; a pore = air fully enclosed by metal (3D hole filling).</td></tr>
+  <tr><td>Pore measurements</td><td><code>tools/features.py</code> &rarr; <code>compute_features()</code>, <code>sphericity()</code>, <code>classify()</code></td><td>Volume, diameter, roundness, elongation, position; then gas pore / lack of fusion / crack.</td></tr>
+  <tr><td>Precision / recall vs NIST</td><td><code>tools/features.py</code> &rarr; <code>compare_to_ground_truth()</code></td><td>Matches our pores with NIST's and counts correct (TP), false (FP) and missed (FN).</td></tr>
+  <tr><td>Shrinking the data</td><td><code>tools/preprocess.py</code> &rarr; <code>downsample_mean()</code>, <code>downsample_max()</code></td><td>Mean for grey values, max for labels (so small pores don't disappear).</td></tr>
+  <tr><td>Whole pipeline</td><td><code>tools/pipeline.py</code> &rarr; <code>build_nist()</code>, <code>build_enigma()</code></td><td>Runs all steps and writes the 4 files.</td></tr>
+  <tr><td>Loading data in Unity</td><td><code>Core/VolumeLoader.cs</code>, <code>VolumeDataset.cs</code>, <code>FeatureCatalog.cs</code></td><td>Reads the raw files and CSV into 3D textures and a pore list.</td></tr>
+  <tr><td>Drawing the CT scan</td><td><code>Rendering/Shaders/XRayVolume.shader</code></td><td>Ray marching, cut, peel, lens, pore colours.</td></tr>
+  <tr><td>Passing settings to the shader</td><td><code>Rendering/VolumeRenderer.cs</code>, <code>TransferFunction.cs</code></td><td>Sends cut plane, peel amount, lens, colours to the shader.</td></tr>
+  <tr><td>Hand data</td><td><code>Input/HandFrame.cs</code>, <code>IHandSource.cs</code></td><td>26 joints + finger curl, palm normal, pinch distance.</td></tr>
+  <tr><td>Testing without a headset</td><td><code>Input/SimulatedHandSource.cs</code>, <code>HandPoseBuilder.cs</code></td><td>Keyboard/mouse builds full hand skeletons.</td></tr>
+  <tr><td>Recognising a gesture</td><td><code>Gestures/Detectors.cs</code> (e.g. <code>FlatPalmDetector</code>, <code>LensDetector</code>)</td><td>Each detector turns hand data into a confidence 0&ndash;1.</td></tr>
+  <tr><td>Soft thresholds</td><td><code>Gestures/Ramp.cs</code></td><td>Linear ramp instead of a hard yes/no.</td></tr>
+  <tr><td>No flickering</td><td><code>Gestures/GestureState.cs</code></td><td>Hysteresis: enter high, exit low, plus hold times.</td></tr>
+  <tr><td>All thresholds</td><td><code>Input/GestureTuning.cs</code></td><td>One place for every gesture number.</td></tr>
+  <tr><td>Which tool runs</td><td><code>Interaction/ChartTools.cs</code> &rarr; <code>InteractionModeController</code></td><td>Two-hand tools first; a running tool keeps control.</td></tr>
+  <tr><td>Grab, scale, cut, peel, lens, reset</td><td><code>Interaction/SpecimenTools.cs</code></td><td>One small class per tool (<code>GrabTool</code>, <code>SliceTool</code>, &hellip;).</td></tr>
+  <tr><td>Probe</td><td><code>Interaction/ProbeTool.cs</code> + <code>Audio/ProbeSonifier.cs</code></td><td>Value at the fingertip + synthesised sound.</td></tr>
+  <tr><td>Extract, select, brush</td><td><code>Interaction/ChartTools.cs</code></td><td><code>ExtractTool</code>, <code>ChartSelectTool</code>, <code>BrushTool</code>.</td></tr>
+  <tr><td>Linked selection</td><td><code>Analytics/SelectionModel.cs</code></td><td>The one shared selection everything listens to.</td></tr>
+  <tr><td>The 3D chart</td><td><code>Analytics/DefectChart3D.cs</code> + <code>ChartDots.shader</code></td><td>All dots in one mesh; the flying arc animation.</td></tr>
+  <tr><td>Pore colours (types, TP/FP/FN)</td><td><code>Analytics/DefectPalette.cs</code></td><td>Builds a colour lookup table used by both shader and chart.</td></tr>
+  <tr><td>Labels, rings, hand drawing</td><td><code>Feedback/FeedbackHub.cs</code>, <code>HandVisualizer.cs</code></td><td>The visual feedback for every gesture.</td></tr>
+  <tr><td>Starting the app, keys 1/2/T/X</td><td><code>App/Bootstrap.cs</code></td><td>Creates everything, loads a dataset, places it 55 cm in front of you.</td></tr>
+  <tr><td>Quest settings, APK build</td><td><code>Editor/ProjectSetup.cs</code>, <code>BuildScript.cs</code></td><td>One-click XR setup and build.</td></tr>
+  <tr><td>Tests</td><td><code>Assets/Tests/EditMode/</code>, <code>tools/tests/</code></td><td>43 Unity tests, 28 Python tests.</td></tr>
+</table>
+
+<h2>5. Each part explained simply</h2>
+
+<h3>a) Data pipeline (Python, <code>tools/</code>)</h3>
+<ul>
+  <li><b>Crop:</b> the full NIST scan (900 &times; 1010 &times; 984 voxels) doesn't fit in 16 GB RAM with all masks, so we take the central 640&sup3; cube (1.57 mm).</li>
+  <li><b>Denoise:</b> a 3&times;3&times;3 median filter, the same as NIST's own pipeline.</li>
+  <li><b>Threshold, ISO50:</b> the surface sits halfway between the air and metal grey values. We tried <b>Otsu</b> first, but it needs two peaks in the histogram. Pores are under 1 % of the voxels, so Otsu split the metal's noise and found <b>103,094 fake pores</b>. ISO50 gave <b>2,910</b>.</li>
+  <li><b>Pore = air enclosed by metal:</b> 3D hole filling. Air that touches the outside is not a pore.</li>
+  <li><b>Measure first, then shrink:</b> pores are only a few voxels big. Shrinking first would delete them.</li>
+</ul>
+
+<h3>b) Volume rendering (<code>XRayVolume.shader</code>)</h3>
+<ul>
+  <li><b>Ray marching:</b> for every pixel, send a ray from the eye through the cube, take small steps, add up colour and opacity front to back, and stop at 97 % opacity.</li>
+  <li><b>Speed-ups for the Quest:</b>
+    <ul>
+      <li>The gradient is stored in the texture, so each step needs 1 read instead of 7.</li>
+      <li><b>Empty-space skipping:</b> 8&sup3; blocks remember their min/max value, so the ray jumps over empty air.</li>
+      <li><b>Jitter:</b> each ray starts at a slightly different offset, which removes stripe artefacts without needing more steps.</li>
+    </ul></li>
+  <li><b>Cut:</b> the ray starts at the cut plane. If it starts inside metal, we show the grey value directly, which is why the face looks like a real CT slice.</li>
+  <li><b>Peel:</b> metal becomes nearly transparent, but the edges stay visible (a "rim" term), so it looks like glass.</li>
+  <li><b>Lens:</b> if the pixel's ray passes through the finger ring, that ray uses the peeled look.</li>
+</ul>
+
+<h3>c) Hands and gestures (<code>Input/</code>, <code>Gestures/</code>)</h3>
+<ul>
+  <li><b>One hand model, two sources:</b> real Quest tracking or keyboard/mouse. The gesture code is identical, so testing in the editor tests the real code.</li>
+  <li><b>Detectors</b> give a confidence from 0 to 1. Each rule is a <b>soft ramp</b>, and the gesture takes the <b>minimum</b> of its rules (a "fuzzy AND"). Example, flat palm: all four finger curls below 0.25, palm inside the part (+5 cm), held 150 ms.</li>
+  <li><b>Hysteresis:</b> a gesture turns on at confidence 0.95 and only turns off at 0.05. A hand hovering near a threshold therefore doesn't flicker on and off.</li>
+  <li><b>Why rules and not machine learning?</b> The poses are simple and geometric. Rules need no training data, are easy to explain, can be unit-tested, and every threshold is in one file.</li>
+</ul>
+
+<h3>d) Tools (<code>Interaction/</code>)</h3>
+<ul>
+  <li>Each tool follows the same 4 steps: <code>CanStart</code> &rarr; <code>Begin</code> &rarr; <code>Tick</code> (every frame) &rarr; <code>End</code>.</li>
+  <li><b>Grab</b> remembers the hand-to-part offset, so the part doesn't jump. <b>Scale</b> zooms around the point between your hands.</li>
+  <li><b>Cut:</b> the near half (towards your head) is removed. Twisting the wrist 45&deg; doubles or halves the contrast.</li>
+  <li><b>Peel:</b> palm distance 8&ndash;45 cm maps to 0&ndash;100 %.</li>
+  <li><b>Extract:</b> pinch a pore and pull 12 cm, and the chart animation starts.</li>
+</ul>
+
+<h3>e) Chart and linking (<code>Analytics/</code>)</h3>
+<ul>
+  <li><b>Axes:</b> pore size (log volume) &times; sphericity (roundness) &times; build height. Dot size grows with the real pore size; colour = pore type.</li>
+  <li><b>All dots are one mesh</b>, so they cost a single draw call on the Quest.</li>
+  <li><b>Fly-out animation:</b> each pore travels on a curved arc (a B&eacute;zier curve), with staggered start times so the eye can follow.</li>
+  <li><b><code>SelectionModel</code></b> is the single "source of truth". The part, chart, link line and tooltip just listen to it, which is why linking works in both directions.</li>
+</ul>
+
+<h3>f) Sound (<code>Audio/ProbeSonifier.cs</code>)</h3>
+<ul>
+  <li>The sound is generated live in <code>OnAudioFilterRead</code>, on an audio source at the fingertip, so it comes from where your finger is.</li>
+  <li>Pitch follows density over 2 octaves. Clicks get faster near a pore, like a Geiger counter, and each click also pulses a ring, so it works without sound too.</li>
+</ul>
+
+<h2>6. Likely oral exam questions, with short answers</h2>
+
+<div class="q"><b>Q1. Why is this an immersive analytics project and not just a 3D viewer?</b><span class="a">Because users analyse data: they find pores, compare them in a linked chart, and check our detection against ground truth. And they do it with natural 3D interaction, not just by looking.</span></div>
+<div class="q"><b>Q2. Why is 3D better than 2D slices here?</b><span class="a">A CT scan is 3D already. You see where pores cluster without rebuilding it in your head, you can cut at any angle (not only 3 fixed axes), and the chart sits next to the part, so the link is visible.</span></div>
+<div class="q"><b>Q3. What data did you use, and why?</b><span class="a">A: a NIST 3D-printed cobalt-chrome sample, because it has real pores and an official reference segmentation, so we can measure how good our detection is. B: the Enigma rotors scanned by Fraunhofer IIS/EZRT, to show the tool works on a different object.</span></div>
+<div class="q"><b>Q4. How do you find the pores?</b><span class="a">Denoise, then the ISO50 threshold (halfway between air and metal), then "air enclosed by metal" via 3D hole filling, then connected components give each pore an ID. Code: <code>preprocess.py</code>, <code>segment.py</code>.</span></div>
+<div class="q"><b>Q5. Why not Otsu thresholding?</b><span class="a">Otsu needs two peaks in the histogram. Pores are under 1 % of voxels, so there's only one peak, and Otsu found 103,094 fake pores. ISO50 is the standard in industrial CT.</span></div>
+<div class="q"><b>Q6. How good is your segmentation?</b><span class="a">Precision 0.90 (90 % of what we find is real), recall 0.75 (we find 75 % of the real pores), IoU 0.59. We miss small, faint pores because we use one global threshold, while NIST used a local one. The app shows this honestly in the ground-truth view (key T).</span></div>
+<div class="q"><b>Q7. What are precision, recall and IoU?</b><span class="a">Precision = TP / (TP + FP). Recall = TP / (TP + FN). IoU = overlap of our pore voxels and theirs, divided by their union.</span></div>
+<div class="q"><b>Q8. What is sphericity, and why is it 1.0 for many small pores?</b><span class="a">How close a shape is to a sphere (1 = perfect sphere), computed from volume and surface area. Pores of 8&ndash;30 voxels are too small to measure their surface properly, so the value saturates. We say this openly.</span></div>
+<div class="q"><b>Q9. How does volume rendering work?</b><span class="a">Ray marching: per pixel, step through the volume, look up colour and opacity for each grey value (the transfer function), add them up front to back, and stop when nearly opaque. It's done per eye, so stereo is correct.</span></div>
+<div class="q"><b>Q10. How did you make it fast enough for a Quest?</b><span class="a">Empty-space skipping, gradient stored in the texture, early stop at 97 %, jitter instead of more steps, and quality tiers of 96/160/256 steps with opacity correction so all tiers look alike. Note: we haven't measured the frame rate on a Quest yet.</span></div>
+<div class="q"><b>Q11. How does the cut make a real CT slice?</b><span class="a">The ray starts at the plane. If the first sample is metal, it outputs that grey value opaquely, so the face shows the measured data, not a made-up colour.</span></div>
+<div class="q"><b>Q12. How do you recognise gestures?</b><span class="a">With geometric rules on finger curls, palm normals and pinch distance. Each rule is a soft ramp, the minimum gives the confidence, and hysteresis keeps it stable. Code: <code>Detectors.cs</code>, <code>Ramp.cs</code>, <code>GestureState.cs</code>.</span></div>
+<div class="q"><b>Q13. What is hysteresis, and why do you need it?</b><span class="a">Different thresholds for turning on (0.95) and off (0.05), plus hold times. Real hand tracking is noisy, and without it a gesture would flicker on and off.</span></div>
+<div class="q"><b>Q14. What if two gestures are true at the same time?</b><span class="a">The recognizer reports everything; <code>InteractionModeController</code> decides. Two-hand tools are checked first, and a running tool keeps control until its own gesture ends. One bug we fixed: a running cut used to block the peel gesture.</span></div>
+<div class="q"><b>Q15. How is the palm normal computed?</b><span class="a">The cross product of "across the knuckles" and "along the hand". The order is flipped for the left hand, otherwise its normal points out of the back of the hand. A unit test checks both hands.</span></div>
+<div class="q"><b>Q16. How does linked selection work?</b><span class="a">One <code>SelectionModel</code> holds the selected pore IDs. The shader, chart, link line and tooltip all listen to it. Selecting in the part or in the chart changes the same model, so both views update.</span></div>
+<div class="q"><b>Q17. What do the chart axes mean?</b><span class="a">x = pore size (log volume), y = sphericity, z = build height in the sample. Build height matters because the part is 3D-printed layer by layer. Visible trend: bigger pores are less round.</span></div>
+<div class="q"><b>Q18. What do the pore colours mean?</b><span class="a">Yellow = gas pore (round), orange = lack of fusion (irregular, unmelted powder), red = crack-like. In ground-truth mode: blue = correct, orange = false, pink = missed.</span></div>
+<div class="q"><b>Q19. Why sound?</b><span class="a">It gives density information without looking away, and it tells you when you're near a pore. It's multisensory analytics, which the challenge asks for. Every click also has a visual ring, so it isn't sound-only.</span></div>
+<div class="q"><b>Q20. Is the probe value a real density?</b><span class="a">No. CT grey values are uncalibrated X-ray attenuation, so we show the raw grey value and the material class, and label it that way.</span></div>
+<div class="q"><b>Q21. How did you test without a headset?</b><span class="a">Simulated hands from keyboard and mouse build full 26-joint hands, so the real gesture code runs. A script also injects hand poses to take screenshots, plus 43 Unity tests and 28 Python tests.</span></div>
+<div class="q"><b>Q22. What bugs did you find?</b><span class="a">A precision pinch was detected as a grab; a running cut blocked the two-hand peel; the lens threshold was too low for this metal (0.6 &rarr; 0.92); labels were drawn behind the volume. All are fixed, with tests where possible.</span></div>
+<div class="q"><b>Q23. What are the limitations?</b><span class="a">Not tested on a real Quest yet, no user study yet, only one global threshold for segmentation, small-pore sphericity isn't meaningful, and some tools aren't tested end to end.</span></div>
+<div class="q"><b>Q24. What would you do next?</b><span class="a">Test in the lab with real hands and tune the thresholds; measure the frame rate; add the specimen shelf and slice cards; run a small user study against a 2D slice viewer.</span></div>
+<div class="q"><b>Q25. How would you evaluate it?</b><span class="a">A small study where users find and compare defects with X-Ray Hands vs a 2D slice viewer. Measure time, errors and a usability questionnaire (e.g. SUS), plus comments.</span></div>
+
+<h2>7. Numbers to remember</h2>
+<table class="num">
+  <tr><td>Pores found (dataset A)</td><td>2,910 (2,775 gas &middot; 132 lack of fusion &middot; 3 crack-like)</td></tr>
+  <tr><td>NIST reference pores</td><td>3,176</td></tr>
+  <tr><td>Precision / recall / IoU</td><td>0.90 / 0.75 / 0.59</td></tr>
+  <tr><td>Otsu (rejected)</td><td>103,094 fake pores</td></tr>
+  <tr><td>Original NIST scan</td><td>900 &times; 1010 &times; 984 voxels, 2.45 &micro;m per voxel</td></tr>
+  <tr><td>Crop &rarr; in app</td><td>640&sup3; (1.57 mm cube) &rarr; 214&sup3; voxels</td></tr>
+  <tr><td>Enigma (dataset B)</td><td>790 parts, 0.181 mm voxels, CT by Fraunhofer IIS/EZRT</td></tr>
+  <tr><td>Hand model</td><td>26 joints (OpenXR)</td></tr>
+  <tr><td>Hysteresis</td><td>on at 0.95, off at 0.05</td></tr>
+  <tr><td>Placement</td><td>55 cm in front, 15 cm below eye height</td></tr>
+  <tr><td>Quality tiers</td><td>96 / 160 / 256 ray steps</td></tr>
+  <tr><td>Tests</td><td>43 Unity + 28 Python, all passing</td></tr>
+  <tr><td>Code size</td><td>about 5,250 lines C# + 1,340 lines Python</td></tr>
+  <tr><td>Tools</td><td>Unity 6.3 LTS (URP), OpenXR, Meta OpenXR, XR Hands, AR Foundation; Python 3.11 with numpy, scipy, scikit-image, pydicom, tifffile, pandas</td></tr>
+</table>
+
+<h2>8. Tips for the exam</h2>
+<ul>
+  <li><b>Demo order that works:</b> load (key 1) &rarr; peel (P) &rarr; cut (C) &rarr; extract to chart (X) &rarr; pick a dot &rarr; ground truth (T) &rarr; Enigma (2).</li>
+  <li><b>Be honest about what isn't done.</b> Saying "not tested on the Quest yet, here is our test plan" is much better than guessing.</li>
+  <li><b>If asked how you built it:</b> be open about any AI coding help you used, and check the course rules on this before the exam. Make sure you can explain every file in section 4 yourself.</li>
+  <li><b>Read before the exam:</b> <code>docs/EXPLAINED.md</code> (module details), <code>docs/DATA.md</code> (data steps), <code>docs/VERIFICATION.md</code> (what was tested).</li>
+</ul>
+
+</body>
+</html>

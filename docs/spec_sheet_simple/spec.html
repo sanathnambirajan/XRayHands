@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>X-Ray Hands Spec Sheet</title>
+<style>
+  @page { size: A4; margin: 0; }
+  :root { --ink: #1a2230; --muted: #5b6676; --line: #d9dee6; --accent: #1b7fb0; --soft: #f2f6f9; --ok: #1f8a4c; --todo: #a36a00; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Calibri, Arial, sans-serif; font-size: 10.2pt; line-height: 1.45; color: var(--ink); background: #fff; }
+  .page { width: 210mm; height: 297mm; padding: 14mm 16mm 13mm; position: relative; page-break-after: always; overflow: hidden; }
+  .page:last-child { page-break-after: auto; }
+  .top { display: flex; justify-content: space-between; font-size: 8pt; color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 5px; margin-bottom: 12px; }
+  .foot { position: absolute; left: 16mm; right: 16mm; bottom: 8mm; display: flex; justify-content: space-between; font-size: 8pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 5px; }
+  h1 { font-size: 24pt; margin: 0; line-height: 1.15; }
+  h1 span { color: var(--accent); }
+  .subtitle { font-size: 11pt; color: var(--muted); margin: 3px 0 12px; }
+  h2 { font-size: 12.5pt; color: var(--accent); margin: 13px 0 6px; padding-bottom: 3px; border-bottom: 2px solid var(--accent); }
+  h3 { font-size: 10.3pt; margin: 0 0 3px; }
+  p { margin: 0 0 6px; }
+  ul { margin: 0 0 4px; padding-left: 17px; }
+  li { margin-bottom: 2px; }
+  table { width: 100%; border-collapse: collapse; margin: 3px 0 6px; font-size: 9.4pt; }
+  th, td { text-align: left; vertical-align: top; padding: 4px 7px; border-bottom: 1px solid var(--line); }
+  th { background: var(--soft); font-weight: 600; }
+  .info td { padding: 3px 7px; }
+  .info td:first-child { width: 24%; font-weight: 600; color: var(--muted); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9px; }
+  .box { background: var(--soft); border-left: 3px solid var(--accent); padding: 7px 10px; border-radius: 3px; }
+  figure { margin: 0 0 6px; }
+  figure img { width: 100%; display: block; border-radius: 4px; background: #11141b; }
+  figcaption { font-size: 8.5pt; color: var(--muted); margin-top: 3px; line-height: 1.35; }
+  figcaption b { color: var(--ink); }
+  .fit { object-fit: cover; }
+  code { font-family: Consolas, monospace; font-size: 8.7pt; }
+  .ok, .todo { font-size: 7.6pt; font-weight: 700; padding: 1px 5px; border-radius: 3px; white-space: nowrap; }
+  .ok { color: var(--ok); background: #e3f4ea; }
+  .todo { color: var(--todo); background: #fbf0d9; }
+  .gest { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .gest div { font-size: 8.3pt; text-align: center; line-height: 1.3; }
+  .gest img { width: 100%; height: 62px; object-fit: cover; border-radius: 4px; background: #11141b; display: block; margin-bottom: 3px; }
+  .gest b { display: block; font-size: 8.8pt; }
+  .note { font-size: 8.6pt; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<section class="page">
+  <div class="top"><span>6172 Immersive Analytics &middot; WiSe 2026/27 &middot; Part 1: Specification Sheet</span><span>Group 07 &middot; 02.11.2026</span></div>
+
+  <h1>X-Ray Hands: <span>looking inside CT scans with your bare hands</span></h1>
+  <div class="subtitle">Cut, peel and probe real industrial X-ray CT scans in mixed reality, and pull the hidden defects out into a 3D chart.</div>
+
+  <table class="info">
+    <tr><td>Group 07</td><td>Mithulram Gunasekaran (116787) &middot; Sanath Nambirajan (119546)</td></tr>
+    <tr><td>Challenge</td><td>C2: Beyond Point-and-Click &ndash; Native 3D Interactions for Complex Data</td></tr>
+  </table>
+
+  <h2>1. Project goal</h2>
+  <p>When engineers check an X-ray CT scan of a metal part for pores and cracks, they usually scroll through hundreds of 2D slices or turn a 3D rendering with mouse and menus. Where the defects actually sit in 3D has to be pieced together in their head.</p>
+  <p>X-Ray Hands puts the scanned part in front of the user in their real room (Meta Quest 3, passthrough). The hands are the only tool: a <b>flat palm cuts</b> the part and shows the real CT slice, <b>two palms peel</b> the metal away so only the pores stay, a <b>finger probes</b> the material with sound, and a <b>pinch-and-pull</b> sends every pore into a linked 3D scatter plot. There are no menus and no controllers. Our goal is that a user can find, compare and check defects in one place.</p>
+
+  <div class="two">
+    <div class="box">
+      <h3>Where can 3D visualization be helpful?</h3>
+      <ul>
+        <li>A CT scan is already a 3D object; in 3D you see where pores cluster without rebuilding it from slices.</li>
+        <li>The cut plane follows the hand, so any angle is possible, not just the three fixed slice axes.</li>
+        <li>Pores and the chart sit in the same space, so it is easy to see which dot belongs to which pore.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Which 2D visualizations work better in 3D?</h3>
+      <ul>
+        <li><b>2D slice viewer</b> &rarr; a slice on the cut face of the real 3D part.</li>
+        <li><b>2D scatterplot</b> of defect features &rarr; 3D scatter plot (size &times; shape &times; height), linked to the part.</li>
+        <li><b>Threshold slider</b> &rarr; peeling with two hands.</li>
+      </ul>
+    </div>
+  </div>
+
+  <figure style="margin-top:10px">
+    <img src="../spec_sheet/img/fig/fig_cut.png" alt="" class="fit" style="height:180px">
+    <figcaption><b>Fig. 1 &ndash; Cutting with a flat palm</b> (screenshot from our app). The half between palm and user disappears and the cut face shows the real grey values of the CT scan, with pores coloured by type.</figcaption>
+  </figure>
+
+  <h2>2. Used device</h2>
+  <table>
+    <tr><th style="width:24%">Device</th><th>How we use it</th></tr>
+    <tr><td><b>Meta Quest 3</b></td><td>Mixed reality with colour passthrough and hand tracking (OpenXR). No controllers are needed. We plan to test it on the lab headset.</td></tr>
+    <tr><td>PC / laptop</td><td>Development in Unity. Simulated hands (keyboard and mouse) let us test every gesture without a headset. Fallback for the demo: Quest Link from a lab PC.</td></tr>
+  </table>
+
+  <div class="foot"><span>X-Ray Hands &middot; Group 07</span><span>1 / 3</span></div>
+</section>
+
+<!-- PAGE 2 -->
+<section class="page">
+  <div class="top"><span>6172 Immersive Analytics &middot; WiSe 2026/27 &middot; Part 1: Specification Sheet</span><span>Group 07 &middot; 02.11.2026</span></div>
+
+  <h2 style="margin-top:0">3. Dataset and format</h2>
+  <p>We use two real, openly licensed CT scans. Both were processed with our own Python pipeline (crop, filter, find the pores or parts, compute features) and saved in a simple format that Unity loads.</p>
+  <table>
+    <tr><th style="width:17%"></th><th style="width:42%">A &middot; 3D-printed metal sample (main dataset)</th><th>B &middot; Enigma I cipher machine rotors</th></tr>
+    <tr><td><b>Source</b></td><td>NIST, cobalt-chrome part made by laser powder bed fusion (doi:10.18434/M32162), incl. reference pore segmentation</td><td>Deutsches Museum, scanned by Fraunhofer IIS/EZRT (doi:10.5281/zenodo.8232721)</td></tr>
+    <tr><td><b>Original</b></td><td>900 &times; 1010 &times; 984 voxels, 2.45 &micro;m, 16-bit TIFF</td><td>549 slices of 784 &times; 551 px, 0.181 mm, 16-bit DICOM</td></tr>
+    <tr><td><b>In the app</b></td><td>214&sup3; voxels (central 1.57 mm cube)</td><td>125 &times; 196 &times; 135 voxels</td></tr>
+    <tr><td><b>Content</b></td><td><b>2,910 pores</b>: 2,775 gas pores, 132 lack-of-fusion, 3 crack-like</td><td><b>790 parts</b> (contacts, pins, springs) grouped by density</td></tr>
+    <tr><td><b>License</b></td><td>NIST open license</td><td>CC BY-SA 4.0</td></tr>
+  </table>
+  <p><b>Format per dataset:</b> <code>volume_u8.raw</code> (grey values) &middot; <code>labels_u16.raw</code> (which pore/part each voxel belongs to) &middot; <code>features.csv</code> (one row per pore: volume, diameter, sphericity, elongation, position, type) &middot; <code>meta.json</code> (size, voxel spacing, license).</p>
+  <p class="note">Check against the NIST reference: our pore detection finds 75 % of the reference pores (recall), and 90 % of what we find is a real pore (precision).</p>
+
+  <h2>4. Visualization techniques</h2>
+  <table>
+    <tr><th style="width:25%">Technique</th><th>What it does</th><th style="width:11%">Status</th></tr>
+    <tr><td>Direct volume rendering</td><td>Shows the CT scan as a see-through 3D object (GPU ray marching).</td><td><span class="ok">WORKS</span></td></tr>
+    <tr><td>Cut plane + CT slice</td><td>The palm is the cutting plane; the cut face shows the real slice.</td><td><span class="ok">WORKS</span></td></tr>
+    <tr><td>Peeling (transfer function)</td><td>Low-density metal turns to glass, pores stay visible.</td><td><span class="ok">WORKS</span></td></tr>
+    <tr><td>Magic lens</td><td>Inside a finger ring the part is peeled, outside it stays solid.</td><td><span class="ok">WORKS</span></td></tr>
+    <tr><td>Linked 3D scatter plot</td><td>Pores fly into a chart (size &times; sphericity &times; build height); picking a dot highlights its pore.</td><td><span class="ok">WORKS</span></td></tr>
+    <tr><td>Ground-truth view</td><td>Colours pores as correct / false / missed against the NIST reference.</td><td><span class="ok">WORKS</span></td></tr>
+    <tr><td>Sound probe</td><td>Pitch follows the grey value, clicks get faster near a pore.</td><td><span class="todo">TO TEST</span></td></tr>
+    <tr><td>Two-hand box brushing</td><td>Select a group of dots in the chart with both hands.</td><td><span class="todo">TO TEST</span></td></tr>
+  </table>
+
+  <h2>5. Mockups</h2>
+  <div class="two">
+    <figure>
+      <img src="../spec_sheet/img/fig/fig_peel.png" alt="" class="fit" style="height:155px">
+      <figcaption><b>Fig. 2 &ndash; Peeling.</b> Two facing palms make the metal see-through; the pores stay.</figcaption>
+    </figure>
+    <figure>
+      <img src="../spec_sheet/img/fig/fig_lens.png" alt="" class="fit" style="height:155px">
+      <figcaption><b>Fig. 3 &ndash; Magic lens.</b> Through the thumb&ndash;index ring the part looks peeled.</figcaption>
+    </figure>
+  </div>
+
+  <div class="foot"><span>X-Ray Hands &middot; Group 07</span><span>2 / 3</span></div>
+</section>
+
+<!-- PAGE 3 -->
+<section class="page">
+  <div class="top"><span>6172 Immersive Analytics &middot; WiSe 2026/27 &middot; Part 1: Specification Sheet</span><span>Group 07 &middot; 02.11.2026</span></div>
+
+  <h2 style="margin-top:0">5. Mockups (continued)</h2>
+  <figure>
+    <img src="../spec_sheet/img/fig/fig_extract_flight.png" alt="" class="fit" style="height:205px">
+    <figcaption><b>Fig. 4 &ndash; Pinch and pull.</b> The user pinches a pore and pulls; all 2,910 pores fly out of the part into the 3D scatter plot.</figcaption>
+  </figure>
+  <figure>
+    <img src="../spec_sheet/img/fig/fig_chart_linked.png" alt="" class="fit" style="height:205px">
+    <figcaption><b>Fig. 5 &ndash; Linked chart.</b> Dot size = pore size, colour = pore type. The picked dot (the largest pore) is connected to its pore in the part by a dashed line and shows a tooltip.</figcaption>
+  </figure>
+  <div class="three">
+    <figure>
+      <img src="../spec_sheet/img/fig/fig_probe.png" alt="" class="fit" style="height:120px">
+      <figcaption><b>Fig. 6 &ndash; Probe.</b> Material, grey value and distance to the nearest pore.</figcaption>
+    </figure>
+    <figure>
+      <img src="../spec_sheet/img/fig/fig_groundtruth.png" alt="" class="fit" style="height:120px">
+      <figcaption><b>Fig. 7 &ndash; Ground truth.</b> Blue correct, orange false, pink missed.</figcaption>
+    </figure>
+    <figure>
+      <img src="../spec_sheet/img/fig/fig_enigma_peel.png" alt="" class="fit" style="height:120px">
+      <figcaption><b>Fig. 8 &ndash; Dataset B.</b> Enigma rotors, peeled, parts coloured by density.</figcaption>
+    </figure>
+  </div>
+
+  <h3 style="margin-top:6px">Gestures (no menus, no controllers)</h3>
+  <div class="gest">
+    <div><img src="../spec_sheet/img/fig/g_grab.png" alt=""><b>Grab</b>fist: move, rotate</div>
+    <div><img src="../spec_sheet/img/fig/g_cut.png" alt=""><b>Cut</b>flat palm</div>
+    <div><img src="../spec_sheet/img/fig/g_peel.png" alt=""><b>Peel</b>two palms</div>
+    <div><img src="../spec_sheet/img/fig/g_probe.png" alt=""><b>Probe</b>index finger</div>
+    <div><img src="../spec_sheet/img/fig/g_extract.png" alt=""><b>Extract</b>pinch and pull</div>
+    <div><img src="../spec_sheet/img/fig/g_lens.png" alt=""><b>Lens</b>&ldquo;O&rdquo; with fingers</div>
+  </div>
+
+  <h2>6. Implementation and libraries</h2>
+  <ul>
+    <li><b>Unity 6.3 LTS</b> (URP), C#, with OpenXR, Meta OpenXR, XR Hands and AR Foundation for hand tracking and passthrough.</li>
+    <li><b>Own code:</b> gesture recognizer, volume renderer (HLSL shader), interaction tools, 3D chart, sound probe.</li>
+    <li><b>Python 3.11</b> for the data pipeline: numpy, scipy, scikit-image, pydicom, tifffile, pandas.</li>
+  </ul>
+  <p class="note">All figures are real screenshots from our app in the Unity editor, with simulated hands. Testing on a real Quest 3 is the next step.</p>
+
+  <div class="foot"><span>X-Ray Hands &middot; Group 07</span><span>3 / 3</span></div>
+</section>
+
+</body>
+</html>
