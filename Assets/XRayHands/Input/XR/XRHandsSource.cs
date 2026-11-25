@@ -23,6 +23,7 @@ namespace XRayHands.Input
         [SerializeField] private Camera _head;
 
         private static readonly List<XRHandSubsystem> Subsystems = new List<XRHandSubsystem>();
+        private static readonly List<UnityEngine.XR.XRDisplaySubsystem> Displays = new List<UnityEngine.XR.XRDisplaySubsystem>();
         private readonly HandFrame _left = new HandFrame(Handedness.Left);
         private readonly HandFrame _right = new HandFrame(Handedness.Right);
         private XRHandSubsystem _subsystem;
@@ -46,12 +47,20 @@ namespace XRayHands.Input
             }
         }
 
-        /// <summary>True if a running XR hand subsystem exists (decides real vs simulated hands).</summary>
+        /// <summary>
+        /// True if a headset is present (decides real vs simulated hands). Over Quest Link the XR
+        /// session and the hand subsystem start a few frames after Awake, so an initialised XR
+        /// loader counts too; <see cref="Tick"/> picks the hand subsystem up as soon as it runs.
+        /// Without a headset the OpenXR loader fails to initialise and this stays false.
+        /// </summary>
         public static bool IsAvailable()
         {
             SubsystemManager.GetSubsystems(Subsystems);
             foreach (XRHandSubsystem s in Subsystems) if (s.running) return true;
-            return false;
+            SubsystemManager.GetSubsystems(Displays);
+            foreach (UnityEngine.XR.XRDisplaySubsystem d in Displays) if (d.running) return true;
+            var xr = UnityEngine.XR.Management.XRGeneralSettings.Instance;
+            return xr != null && xr.Manager != null && xr.Manager.activeLoader != null;
         }
 
         /// <inheritdoc/>

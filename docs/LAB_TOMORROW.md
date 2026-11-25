@@ -60,3 +60,26 @@ Also note: gestures that fire by accident, frame drops (and what was active), la
 6. Can we use or borrow a Quest outside Mondays?
 7. What exactly should the 1-minute progress video (due 14.12, 10:00) show?
 8. Confirm deadlines: implementation 25.01.2027 17:00, demo 01.02.2027.
+
+---
+
+## Next lab visit: make the gestures work with real hands (Quest Link / Air Link)
+
+Status: real hands are tracked over Air Link (`[XRayHands] Hands: XR hand tracking`), but
+gestures did not fire yet. The app now logs what it measures from the hands every 0.5 s
+(`[XRayHands][diag]` lines: finger curls, pinch distance, distance to the block, every
+gesture's confidence, the running tool). Claude reads these from the Unity log and tunes the
+thresholds.
+
+1. Laptop: open the project in Unity (`Main.unity`). Meta Horizon Link app running.
+2. Headset: hand tracking ON, controllers put away. Start Air Link (or Link with a data cable).
+3. Tell Claude "connected". Claude presses Play and checks the hands line.
+4. If the block is not right in front of you: press **Backspace** on the laptop (re-centres it).
+5. Hold each pose for ~5 s, saying which one you are doing:
+   - open flat hand, fingers together, palm into the block (cut)
+   - two flat hands facing each other beside the block (peel)
+   - index finger pointing into the block (probe)
+   - thumb and index pinched (pinch)
+   - fist near the block (grab)
+   - thumb + index "O" in front of your eye (lens)
+6. Claude compares the logged numbers with the thresholds and adjusts `GestureTuning`.

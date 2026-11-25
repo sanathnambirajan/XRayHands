@@ -122,6 +122,7 @@ namespace XRayHands.App
                 Camera head = Camera.main;
                 xr.TrackingSpace = head != null ? head.transform.parent : null;
                 Hands = xr;
+                Debug.Log("[XRayHands] Hands: XR hand tracking");
             }
             else
             {
@@ -129,6 +130,7 @@ namespace XRayHands.App
                 sim.Specimen = SpecimenRoot;
                 Hands = sim;
                 EnterDesktopMode();
+                Debug.Log("[XRayHands] Hands: keyboard/mouse simulation (no XR runtime)");
             }
             CreateHandView(Hands.Left, "LeftHand");
             CreateHandView(Hands.Right, "RightHand");
@@ -260,6 +262,7 @@ namespace XRayHands.App
             GestureContext ctx = BuildContext();
             Recognizer.Update(ctx, dt);
             _controller.Tick(new ToolFrame(ctx, Recognizer, dt));
+            if (Hands is XRHandsSource) GestureDiagnostics.Tick(ctx, Recognizer, _controller.Active);
             _sonifier.UpdateReading(_probe.Reading, Mathf.Max(Dataset.ExtentMm.x, Mathf.Max(Dataset.ExtentMm.y, Dataset.ExtentMm.z)));
             UpdateLinkLine();
             HandleKeyboardShortcuts();
